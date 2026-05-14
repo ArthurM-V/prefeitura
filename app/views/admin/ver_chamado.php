@@ -1,5 +1,4 @@
 <?php
-
 $pageTitle = 'Chamado #' . $chamado['id'];
 require __DIR__ . '/../shared/header.php';
 
@@ -10,6 +9,13 @@ $statusColors = [
     'Resolvido'    => 'badge-success',
     'Encerrado'    => 'badge-neutral',
 ];
+
+$imgCidadao = null;
+$imgAdmin   = null;
+foreach ($imagens as $img) {
+    if ($img['tipo'] === 'cidadao') $imgCidadao = $img;
+    if ($img['tipo'] === 'admin')   $imgAdmin   = $img;
+}
 ?>
 
 <?php require __DIR__ . '/navbar.php'; ?>
@@ -36,47 +42,48 @@ $statusColors = [
 
                 <!-- Info do chamado -->
                 <section class="card">
-                    <div class="card-header-admin">
-                        <h3><?= htmlspecialchars($chamado['titulo']) ?></h3>
-                    </div>
+                    <div class="card-header-admin"><h3><?= htmlspecialchars($chamado['titulo']) ?></h3></div>
                     <div class="card-body">
                         <dl class="info-list">
                             <dt>Descrição</dt>
                             <dd><?= nl2br(htmlspecialchars($chamado['descricao'])) ?></dd>
-
                             <dt>Cidadão</dt>
                             <dd>
                                 <?= htmlspecialchars($chamado['usuario_nome']) ?>
                                 <span class="text-muted">(<?= htmlspecialchars($chamado['usuario_email']) ?>)</span>
                             </dd>
-
                             <dt>Categoria</dt>
                             <dd><?= htmlspecialchars($chamado['categoria_nome']) ?></dd>
-
                             <?php if (!empty($chamado['localizacao'])): ?>
                                 <dt>Localização</dt>
                                 <dd>📍 <?= htmlspecialchars($chamado['localizacao']) ?></dd>
                             <?php endif; ?>
-
-                            <dt>Data de abertura</dt>
+                            <dt>Abertura</dt>
                             <dd><?= date('d/m/Y H:i', strtotime($chamado['data_abertura'])) ?></dd>
-
                             <?php if ($chamado['data_fechamento']): ?>
-                                <dt>Data de encerramento</dt>
+                                <dt>Encerramento</dt>
                                 <dd><?= date('d/m/Y H:i', strtotime($chamado['data_fechamento'])) ?></dd>
                             <?php endif; ?>
-
-                            <dt>Órgão responsável</dt>
-                            <dd><?= $chamado['orgao_nome'] ? htmlspecialchars($chamado['orgao_nome']) : '<em class="text-muted">Não atribuído</em>' ?></dd>
+                            <dt>Órgão</dt>
+                            <dd><?= $chamado['orgao_nome']
+                                ? htmlspecialchars($chamado['orgao_nome'])
+                                : '<em class="text-muted">Não atribuído</em>' ?></dd>
                         </dl>
+
+                        <?php if ($imgCidadao): ?>
+                            <div style="margin-top:1rem">
+                                <p class="text-sm text-muted" style="margin-bottom:.4rem">Foto enviada pelo cidadão:</p>
+                                <img src="<?= BASE_URL ?>/imgs/uploads/<?= htmlspecialchars($imgCidadao['caminho']) ?>"
+                                     alt="Foto do problema"
+                                     style="max-width:100%;border-radius:8px;border:1px solid var(--border)">
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </section>
 
                 <!-- Feedbacks -->
                 <section class="card">
-                    <div class="card-header-admin">
-                        <h3>Feedbacks enviados</h3>
-                    </div>
+                    <div class="card-header-admin"><h3>Feedbacks enviados</h3></div>
                     <div class="card-body">
                         <?php if (empty($feedbacks)): ?>
                             <p class="text-muted">Nenhum feedback enviado ainda.</p>
@@ -85,6 +92,14 @@ $statusColors = [
                                 <?php foreach ($feedbacks as $f): ?>
                                     <li class="feedback-item">
                                         <p class="feedback-msg"><?= nl2br(htmlspecialchars($f['mensagem'])) ?></p>
+                                        <?php if ($imgAdmin): ?>
+                                            <div style="margin-top:.75rem">
+                                                <p class="text-sm text-muted" style="margin-bottom:.4rem">Foto da solução:</p>
+                                                <img src="<?= BASE_URL ?>/imgs/uploads/<?= htmlspecialchars($imgAdmin['caminho']) ?>"
+                                                     alt="Foto da solução"
+                                                     style="max-width:100%;border-radius:8px;border:1px solid var(--border)">
+                                            </div>
+                                        <?php endif; ?>
                                         <p class="feedback-meta">
                                             <?= htmlspecialchars($f['autor']) ?>
                                             · <?= date('d/m/Y H:i', strtotime($f['data'])) ?>
@@ -98,9 +113,7 @@ $statusColors = [
 
                 <!-- Histórico -->
                 <section class="card">
-                    <div class="card-header-admin">
-                        <h3>Histórico de ações</h3>
-                    </div>
+                    <div class="card-header-admin"><h3>Histórico de ações</h3></div>
                     <div class="card-body">
                         <?php if (empty($historicos)): ?>
                             <p class="text-muted">Nenhum registro no histórico.</p>
@@ -131,7 +144,7 @@ $statusColors = [
                     <section class="card">
                         <div class="card-header-admin">
                             <h3>Chamados semelhantes</h3>
-                            <span class="text-muted text-sm">Mesma categoria: <?= htmlspecialchars($chamado['categoria_nome']) ?></span>
+                            <span class="text-muted text-sm"><?= htmlspecialchars($chamado['categoria_nome']) ?></span>
                         </div>
                         <div class="card-body">
                             <ul class="similar-list">
@@ -159,12 +172,11 @@ $statusColors = [
                 <section class="card" x-data="acoes(<?= $chamado['id'] ?>)">
                     <div class="card-header-admin"><h3>Alterar status</h3></div>
                     <div class="card-body">
-                        <div x-show="msg" class="alert" :class="msgTipo === 'sucesso' ? 'alert-success' : 'alert-danger'" x-text="msg" x-transition></div>
+                        <div x-show="msg" x-cloak class="alert" :class="msgTipo==='sucesso'?'alert-success':'alert-danger'" x-text="msg" x-transition></div>
                         <select x-model="novoStatus" class="mb-2">
                             <option value="">Selecione o status</option>
                             <?php foreach ($statuses as $s): ?>
-                                <option value="<?= $s['id'] ?>"
-                                    <?= $s['id'] == $chamado['status_id'] ? 'selected' : '' ?>>
+                                <option value="<?= $s['id'] ?>" <?= $s['id'] == $chamado['status_id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($s['nome']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -180,12 +192,11 @@ $statusColors = [
                 <section class="card" x-data="acoes(<?= $chamado['id'] ?>)">
                     <div class="card-header-admin"><h3>Atribuir órgão</h3></div>
                     <div class="card-body">
-                        <div x-show="msg" class="alert" :class="msgTipo === 'sucesso' ? 'alert-success' : 'alert-danger'" x-text="msg" x-transition></div>
+                        <div x-show="msg" x-cloak class="alert" :class="msgTipo==='sucesso'?'alert-success':'alert-danger'" x-text="msg" x-transition></div>
                         <select x-model="novoOrgao" class="mb-2">
                             <option value="">Selecione o órgão</option>
                             <?php foreach ($orgaos as $o): ?>
-                                <option value="<?= $o['id'] ?>"
-                                    <?= $o['id'] == $chamado['orgao_id'] ? 'selected' : '' ?>>
+                                <option value="<?= $o['id'] ?>" <?= $o['id'] == $chamado['orgao_id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($o['nome']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -198,16 +209,19 @@ $statusColors = [
                 </section>
 
                 <!-- Enviar feedback -->
-                <section class="card" x-data="acoes(<?= $chamado['id'] ?>)">
+                <section class="card" x-data="acoesComImagem(<?= $chamado['id'] ?>)">
                     <div class="card-header-admin"><h3>Enviar feedback ao cidadão</h3></div>
                     <div class="card-body">
-                        <div x-show="msg" class="alert" :class="msgTipo === 'sucesso' ? 'alert-success' : 'alert-danger'" x-text="msg" x-transition></div>
-                        <textarea
-                            x-model="mensagemFeedback"
-                            rows="4"
-                            placeholder="Escreva a resposta para o cidadão..."
-                            class="mb-2"
-                        ></textarea>
+                        <div x-show="msg" x-cloak class="alert" :class="msgTipo==='sucesso'?'alert-success':'alert-danger'" x-text="msg" x-transition></div>
+                        <div class="form-group">
+                            <textarea x-model="mensagemFeedback" rows="4"
+                                placeholder="Escreva a resposta para o cidadão..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:.8rem;font-weight:500">Foto da solução (opcional)</label>
+                            <input type="file" accept="image/*" @change="imagemFile = $event.target.files[0]">
+                            <span class="text-sm text-muted">JPG, PNG ou WEBP — máx. 5MB</span>
+                        </div>
                         <button class="btn btn-success btn-block" @click="enviarFeedback()" :disabled="carregando">
                             <span x-show="!carregando">Enviar e marcar como resolvido</span>
                             <span x-show="carregando">Enviando...</span>
@@ -215,20 +229,20 @@ $statusColors = [
                     </div>
                 </section>
 
-                <!-- Excluir chamado -->
+                <!-- Excluir -->
                 <section class="card card-danger">
                     <div class="card-header-admin"><h3>Zona de risco</h3></div>
                     <div class="card-body">
                         <p class="text-sm text-muted mb-2">A exclusão remove permanentemente o chamado e todo seu histórico.</p>
                         <button class="btn btn-danger btn-block"
-                            onclick="confirmarExclusaoDetalhe(<?= $chamado['id'] ?>, '<?= htmlspecialchars(addslashes($chamado['titulo'])) ?>')">
+                            onclick="confirmarExclusao(<?= $chamado['id'] ?>, '<?= htmlspecialchars(addslashes($chamado['titulo'])) ?>')">
                             Excluir chamado
                         </button>
                     </div>
                 </section>
 
             </aside>
-        </div><!-- /.detail-grid -->
+        </div>
     </div>
 </main>
 
@@ -250,7 +264,6 @@ function acoes(chamadoId) {
         chamadoId,
         novoStatus: '',
         novoOrgao: '',
-        mensagemFeedback: '',
         carregando: false,
         msg: '',
         msgTipo: 'sucesso',
@@ -275,8 +288,7 @@ function acoes(chamadoId) {
         async alterarStatus() {
             if (!this.novoStatus) return;
             const data = await this.post('<?= BASE_URL ?>/admin/alterar-status', {
-                chamado_id: this.chamadoId,
-                status_id: this.novoStatus,
+                chamado_id: this.chamadoId, status_id: this.novoStatus
             });
             this.msg = data.message;
             this.msgTipo = data.success ? 'sucesso' : 'erro';
@@ -286,13 +298,23 @@ function acoes(chamadoId) {
         async atribuirOrgao() {
             if (!this.novoOrgao) return;
             const data = await this.post('<?= BASE_URL ?>/admin/atribuir-orgao', {
-                chamado_id: this.chamadoId,
-                orgao_id: this.novoOrgao,
+                chamado_id: this.chamadoId, orgao_id: this.novoOrgao
             });
             this.msg = data.message;
             this.msgTipo = data.success ? 'sucesso' : 'erro';
             if (data.success) setTimeout(() => location.reload(), 1200);
-        },
+        }
+    };
+}
+
+function acoesComImagem(chamadoId) {
+    return {
+        chamadoId,
+        mensagemFeedback: '',
+        imagemFile: null,
+        carregando: false,
+        msg: '',
+        msgTipo: 'sucesso',
 
         async enviarFeedback() {
             if (!this.mensagemFeedback.trim()) {
@@ -300,19 +322,35 @@ function acoes(chamadoId) {
                 this.msgTipo = 'erro';
                 return;
             }
-            const data = await this.post('<?= BASE_URL ?>/admin/enviar-feedback', {
-                chamado_id: this.chamadoId,
-                mensagem: this.mensagemFeedback,
-            });
-            this.msg = data.message;
-            this.msgTipo = data.success ? 'sucesso' : 'erro';
-            if (data.success) setTimeout(() => location.reload(), 1500);
+            this.carregando = true;
+            this.msg = '';
+
+            const fd = new FormData();
+            fd.append('chamado_id', this.chamadoId);
+            fd.append('mensagem', this.mensagemFeedback);
+            if (this.imagemFile) fd.append('imagem', this.imagemFile);
+
+            try {
+                const resp = await fetch('<?= BASE_URL ?>/admin/enviar-feedback', {
+                    method: 'POST',
+                    body: fd,
+                });
+                const data = await resp.json();
+                this.msg = data.message;
+                this.msgTipo = data.success ? 'sucesso' : 'erro';
+                if (data.success) setTimeout(() => location.reload(), 1500);
+            } catch {
+                this.msg = 'Erro de conexão.';
+                this.msgTipo = 'erro';
+            } finally {
+                this.carregando = false;
+            }
         }
     };
 }
 
 let chamadoParaExcluir = null;
-function confirmarExclusaoDetalhe(id, titulo) {
+function confirmarExclusao(id, titulo) {
     chamadoParaExcluir = id;
     document.getElementById('modal-texto').textContent =
         `Tem certeza que deseja excluir o chamado "${titulo}"?`;

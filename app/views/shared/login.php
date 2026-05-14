@@ -1,5 +1,4 @@
 <?php
-
 $pageTitle = 'Acesso Administrativo';
 require __DIR__ . '/header.php';
 ?>
@@ -21,13 +20,13 @@ require __DIR__ . '/header.php';
 
         <form method="POST" action="<?= BASE_URL ?>/login" class="login-form">
             <div class="form-group">
-                <label for="email">E-mail</label>
+                <label for="identificador">E-mail</label>
                 <input
                     type="email"
-                    id="email"
-                    name="email"
+                    id="identificador"
+                    name="identificador"
                     placeholder="admin@prefeitura.gov.br"
-                    value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                    value="<?= htmlspecialchars($_POST['identificador'] ?? '') ?>"
                     required
                     autofocus
                 >

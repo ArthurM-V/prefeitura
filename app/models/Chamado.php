@@ -82,12 +82,13 @@ class Chamado {
     public function listarResolvidos(): array {
         $stmt = $this->db->query("
             SELECT c.*, cat.nome as categoria_nome, s.nome as status_nome,
-                   o.nome as orgao_nome, f.mensagem as feedback_mensagem
+                   o.nome as orgao_nome, f.mensagem as feedback_mensagem, i.caminho as imagem_admin
             FROM chamados c
             JOIN categorias cat ON c.categoria_id = cat.id
             JOIN status s ON c.status_id = s.id
             LEFT JOIN orgaos o ON c.orgao_id = o.id
             LEFT JOIN feedbacks f ON f.chamado_id = c.id
+            LEFT JOIN imagens i ON i.chamado_id = c.id AND i.tipo = 'admin'
             WHERE c.status_id = 4
             ORDER BY c.data_fechamento DESC
             LIMIT 10

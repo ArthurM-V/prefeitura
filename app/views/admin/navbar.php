@@ -20,7 +20,7 @@
 
         <div class="admin-navbar-user">
             <span class="admin-user-name">👤 <?= htmlspecialchars($_SESSION['nome'] ?? 'Admin') ?></span>
-            <a href="<?= BASE_URL ?>/logout" class="btn btn-outline btn-sm">Sair</a>
+            <a href="<?= BASE_URL ?>/logout" class="btn btn-outline btn-sm on-dark">Sair</a>
         </div>
     </div>
 </header>

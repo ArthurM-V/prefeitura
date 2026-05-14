@@ -1,8 +1,9 @@
 <?php
+// config/app.php
 
-define('BASE_URL', '/prefeitura/public');
+define('BASE_URL', '/prefeitura');
 define('APP_NAME', 'Portal do Cidadão');
-define('SESSION_TIMEOUT', 3600); // 1 hora
+define('SESSION_TIMEOUT', 3600);
 
 function redirect(string $url): void {
     header("Location: " . BASE_URL . $url);
@@ -17,15 +18,19 @@ function isAdmin(): bool {
     return isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'admin';
 }
 
+function isCidadao(): bool {
+    return isset($_SESSION['tipo']) && $_SESSION['tipo'] === 'cidadao';
+}
+
 function requireAdmin(): void {
     if (!isLoggedIn() || !isAdmin()) {
         redirect('/login');
     }
 }
 
-function requireLogin(): void {
-    if (!isLoggedIn()) {
-        redirect('/login');
+function requireCidadao(): void {
+    if (!isLoggedIn() || !isCidadao()) {
+        redirect('/entrar');
     }
 }
 

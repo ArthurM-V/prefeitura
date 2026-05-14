@@ -1,5 +1,4 @@
 <?php
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -12,3 +11,4 @@
     <script defer src="<?= BASE_URL ?>/js/app.js"></script>
 </head>
 <body>
+<div class="gov-stripe"></div>
