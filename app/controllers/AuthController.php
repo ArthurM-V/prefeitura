@@ -75,11 +75,13 @@ class AuthController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nome     = sanitize($_POST['nome'] ?? '');
             $email    = sanitize($_POST['email'] ?? '');
+            $telefone = sanitize($_POST['telefone'] ?? '');
             $cpf      = sanitize($_POST['cpf'] ?? '');
             $senha    = $_POST['senha'] ?? '';
             $confirma = $_POST['confirma_senha'] ?? '';
 
             $erros = [];
+            if (!$telefone)           $erros[] = 'Telefone e obrigatorio.';
             if (!$nome)               $erros[] = 'Nome é obrigatório.';
             if (!$email)              $erros[] = 'E-mail é obrigatório.';
             if (!$cpf)                $erros[] = 'CPF é obrigatório.';
@@ -100,7 +102,7 @@ class AuthController {
             }
 
             $usuarioModel = new Usuario();
-            if ($usuarioModel->criar($nome, $email, $senha, 'cidadao', $cpf)) {
+            if ($usuarioModel->criar($nome, $email, $senha, 'cidadao', $cpf, $telefone)) {
                 $usuario = $usuarioModel->buscarPorEmail($email);
                 session_regenerate_id(true);
                 $_SESSION['usuario_id'] = $usuario['id'];

@@ -14,7 +14,6 @@ $statusColors = [
 <header class="navbar">
     <div class="container navbar-inner">
         <a href="<?= BASE_URL ?>/" class="navbar-brand">
-            <span class="navbar-brand-icon">🏛️</span>
             <span>Prefeitura Municipal</span>
         </a>
         <div style="display:flex;gap:.5rem;align-items:center">
@@ -56,6 +55,7 @@ $statusColors = [
                             <th>Título</th>
                             <th>Categoria</th>
                             <th>Órgão</th>
+                            <th>Empresa</th>
                             <th>Status</th>
                             <th>Aberto em</th>
                             <th></th>
@@ -72,6 +72,7 @@ $statusColors = [
                                 </td>
                                 <td><?= htmlspecialchars($c['categoria_nome']) ?></td>
                                 <td><?= $c['orgao_nome'] ? htmlspecialchars($c['orgao_nome']) : '<span class="text-muted">—</span>' ?></td>
+                                <td><?= $c['empresa_nome'] ? htmlspecialchars($c['empresa_nome']) : '<span class="text-muted">—</span>' ?></td>
                                 <td>
                                     <span class="badge <?= $statusColors[$c['status_nome']] ?? 'badge-neutral' ?>">
                                         <?= htmlspecialchars($c['status_nome']) ?>

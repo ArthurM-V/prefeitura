@@ -1,13 +1,6 @@
 RewriteEngine On
 
-# Remove /public/ da URL — redireciona /prefeitura/public/... para /prefeitura/...
-RewriteCond %{REQUEST_URI} ^/prefeitura/public/(.*)$
-RewriteRule ^ /prefeitura/%1 [R=301,L]
-
-# Encaminha tudo para public/index.php mantendo query string
+# Encaminha rotas para o front controller mantendo query string.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^prefeitura/(.*)$ prefeitura/public/index.php [QSA,L]
-
-# Raiz de /prefeitura/ sem barra final
-RewriteRule ^prefeitura$ prefeitura/public/index.php [QSA,L]
+RewriteRule ^ index.php [QSA,L]

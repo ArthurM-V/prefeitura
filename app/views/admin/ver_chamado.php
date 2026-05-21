@@ -68,6 +68,10 @@ foreach ($imagens as $img) {
                             <dd><?= $chamado['orgao_nome']
                                 ? htmlspecialchars($chamado['orgao_nome'])
                                 : '<em class="text-muted">Não atribuído</em>' ?></dd>
+                            <dt>Empresa</dt>
+                            <dd><?= $chamado['empresa_nome']
+                                ? htmlspecialchars($chamado['empresa_nome'])
+                                : '<em class="text-muted">Não atribuída</em>' ?></dd>
                         </dl>
 
                         <?php if ($imgCidadao): ?>
@@ -168,6 +172,40 @@ foreach ($imagens as $img) {
             <!-- ===== COLUNA LATERAL (AÇÕES) ===== -->
             <aside class="detail-aside">
 
+                <!-- Editar chamado -->
+                <section class="card" x-data="edicaoChamado(<?= $chamado['id'] ?>)">
+                    <div class="card-header-admin"><h3>Editar chamado</h3></div>
+                    <div class="card-body">
+                        <div x-show="msg" x-cloak class="alert" :class="msgTipo==='sucesso'?'alert-success':'alert-danger'" x-text="msg" x-transition></div>
+                        <div class="form-group">
+                            <label style="font-size:.8rem;font-weight:500">Titulo</label>
+                            <input type="text" x-model="titulo">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:.8rem;font-weight:500">Descricao</label>
+                            <textarea rows="4" x-model="descricao"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:.8rem;font-weight:500">Localizacao</label>
+                            <input type="text" x-model="localizacao">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:.8rem;font-weight:500">Categoria</label>
+                            <select x-model="categoriaId">
+                                <?php foreach ($categorias as $c): ?>
+                                    <option value="<?= $c['id'] ?>" <?= $c['id'] == $chamado['categoria_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($c['nome']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-block" @click="salvar()" :disabled="carregando">
+                            <span x-show="!carregando">Salvar edicao</span>
+                            <span x-show="carregando">Salvando...</span>
+                        </button>
+                    </div>
+                </section>
+
                 <!-- Alterar status -->
                 <section class="card" x-data="acoes(<?= $chamado['id'] ?>)">
                     <div class="card-header-admin"><h3>Alterar status</h3></div>
@@ -183,6 +221,26 @@ foreach ($imagens as $img) {
                         </select>
                         <button class="btn btn-primary btn-block" @click="alterarStatus()" :disabled="carregando">
                             <span x-show="!carregando">Atualizar status</span>
+                            <span x-show="carregando">Salvando...</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Atribuir empresa -->
+                <section class="card" x-data="acoes(<?= $chamado['id'] ?>)">
+                    <div class="card-header-admin"><h3>Atribuir empresa</h3></div>
+                    <div class="card-body">
+                        <div x-show="msg" x-cloak class="alert" :class="msgTipo==='sucesso'?'alert-success':'alert-danger'" x-text="msg" x-transition></div>
+                        <select x-model="novaEmpresa" class="mb-2">
+                            <option value="">Sem empresa</option>
+                            <?php foreach ($empresas as $e): ?>
+                                <option value="<?= $e['id'] ?>" <?= $e['id'] == ($chamado['empresa_id'] ?? 0) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($e['nome']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button class="btn btn-primary btn-block" @click="atribuirEmpresa()" :disabled="carregando">
+                            <span x-show="!carregando">Atualizar empresa</span>
                             <span x-show="carregando">Salvando...</span>
                         </button>
                     </div>
@@ -262,8 +320,9 @@ foreach ($imagens as $img) {
 function acoes(chamadoId) {
     return {
         chamadoId,
-        novoStatus: '',
-        novoOrgao: '',
+        novoStatus: '<?= (int)$chamado['status_id'] ?>',
+        novoOrgao: '<?= (int)($chamado['orgao_id'] ?? 0) ?>',
+        novaEmpresa: '<?= (int)($chamado['empresa_id'] ?? 0) ?>',
         carregando: false,
         msg: '',
         msgTipo: 'sucesso',
@@ -303,6 +362,65 @@ function acoes(chamadoId) {
             this.msg = data.message;
             this.msgTipo = data.success ? 'sucesso' : 'erro';
             if (data.success) setTimeout(() => location.reload(), 1200);
+        },
+
+        async atribuirEmpresa() {
+            const data = await this.post('<?= BASE_URL ?>/admin/atribuir-empresa', {
+                chamado_id: this.chamadoId, empresa_id: this.novaEmpresa
+            });
+            this.msg = data.message;
+            this.msgTipo = data.success ? 'sucesso' : 'erro';
+            if (data.success) setTimeout(() => location.reload(), 1200);
+        }
+    };
+}
+
+function edicaoChamado(chamadoId) {
+    return {
+        chamadoId,
+        titulo: <?= json_encode($chamado['titulo']) ?>,
+        descricao: <?= json_encode($chamado['descricao']) ?>,
+        localizacao: <?= json_encode($chamado['localizacao'] ?? '') ?>,
+        categoriaId: '<?= (int)$chamado['categoria_id'] ?>',
+        carregando: false,
+        msg: '',
+        msgTipo: 'sucesso',
+
+        async salvar() {
+            if (!this.titulo.trim() || !this.descricao.trim() || !this.categoriaId) {
+                this.msg = 'Preencha titulo, descricao e categoria.';
+                this.msgTipo = 'erro';
+                return;
+            }
+            this.carregando = true;
+            this.msg = '';
+            const body = new URLSearchParams({
+                chamado_id: this.chamadoId,
+                titulo: this.titulo,
+                descricao: this.descricao,
+                localizacao: this.localizacao,
+                categoria_id: this.categoriaId,
+                status_id: '<?= (int)$chamado['status_id'] ?>',
+                orgao_id: '<?= (int)($chamado['orgao_id'] ?? 0) ?>',
+                empresa_id: '<?= (int)($chamado['empresa_id'] ?? 0) ?>',
+            });
+
+            try {
+                const resp = await fetch('<?= BASE_URL ?>/admin/atualizar-chamado', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body,
+                });
+                const data = await resp.json();
+                this.msg = data.message;
+                this.msgTipo = data.success ? 'sucesso' : 'erro';
+                if (data.success) setTimeout(() => location.reload(), 1200);
+            } catch {
+                this.msg = 'Erro de conexao.';
+                this.msgTipo = 'erro';
+            } finally {
+                this.carregando = false;
+            }
         }
     };
 }

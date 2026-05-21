@@ -57,9 +57,27 @@ if (str_starts_with($uri, '/admin')) {
     if ($uri === '/admin/dashboard')        { $ctrl->dashboard(); exit; }
     if ($uri === '/admin/chamados')         { $ctrl->chamados(); exit; }
     if ($uri === '/admin/atribuir-orgao')   { $ctrl->atribuirOrgao(); exit; }
+    if ($uri === '/admin/atribuir-empresa') { $ctrl->atribuirEmpresa(); exit; }
+    if ($uri === '/admin/atualizar-chamado'){ $ctrl->atualizarChamado(); exit; }
     if ($uri === '/admin/alterar-status')   { $ctrl->alterarStatus(); exit; }
     if ($uri === '/admin/enviar-feedback')  { $ctrl->enviarFeedback(); exit; }
     if ($uri === '/admin/excluir-chamado')  { $ctrl->excluirChamado(); exit; }
+
+    if ($uri === '/admin/usuarios')          { $ctrl->usuarios(); exit; }
+    if ($uri === '/admin/usuarios/salvar')   { $ctrl->salvarUsuario(); exit; }
+    if ($uri === '/admin/usuarios/excluir')  { $ctrl->excluirUsuario(); exit; }
+
+    if ($uri === '/admin/categorias')         { $ctrl->categorias(); exit; }
+    if ($uri === '/admin/categorias/salvar')  { $ctrl->salvarCategoria(); exit; }
+    if ($uri === '/admin/categorias/excluir') { $ctrl->excluirCategoria(); exit; }
+
+    if ($uri === '/admin/orgaos')             { $ctrl->orgaos(); exit; }
+    if ($uri === '/admin/orgaos/salvar')      { $ctrl->salvarOrgao(); exit; }
+    if ($uri === '/admin/orgaos/excluir')     { $ctrl->excluirOrgao(); exit; }
+
+    if ($uri === '/admin/empresas')           { $ctrl->empresas(); exit; }
+    if ($uri === '/admin/empresas/salvar')    { $ctrl->salvarEmpresa(); exit; }
+    if ($uri === '/admin/empresas/excluir')   { $ctrl->excluirEmpresa(); exit; }
 
     if (preg_match('/^\/admin\/chamado\/(\d+)$/', $uri, $m)) {
         $ctrl->verChamado((int)$m[1]); exit;

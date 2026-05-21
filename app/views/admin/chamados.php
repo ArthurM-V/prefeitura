@@ -54,6 +54,16 @@ $statusColors = [
                 <?php endforeach; ?>
             </select>
 
+            <select name="empresa_id" onchange="this.form.submit()">
+                <option value="">Todas as empresas</option>
+                <?php foreach ($empresas as $e): ?>
+                    <option value="<?= $e['id'] ?>"
+                        <?= ($filtros['empresa_id'] ?? 0) == $e['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($e['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
             <?php if (array_filter($filtros)): ?>
                 <a href="<?= BASE_URL ?>/admin/chamados" class="btn btn-outline btn-sm">
                     Limpar filtros
@@ -75,6 +85,7 @@ $statusColors = [
                             <th>Título</th>
                             <th>Categoria</th>
                             <th>Órgão</th>
+                            <th>Empresa</th>
                             <th>Status</th>
                             <th>Abertura</th>
                             <th>Ações</th>
@@ -92,6 +103,7 @@ $statusColors = [
                                 </td>
                                 <td><?= htmlspecialchars($c['categoria_nome']) ?></td>
                                 <td><?= $c['orgao_nome'] ? htmlspecialchars($c['orgao_nome']) : '<span class="text-muted">—</span>' ?></td>
+                                <td><?= $c['empresa_nome'] ? htmlspecialchars($c['empresa_nome']) : '<span class="text-muted">—</span>' ?></td>
                                 <td>
                                     <span class="badge <?= $statusColors[$c['status_nome']] ?? 'badge-neutral' ?>">
                                         <?= htmlspecialchars($c['status_nome']) ?>

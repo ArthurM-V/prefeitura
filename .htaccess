@@ -1,3 +1,14 @@
 RewriteEngine On
-RewriteRule ^$ public/ [L]
-RewriteRule (.*) public/$1 [L]
+
+# Redireciona acesso direto a /public para a URL limpa.
+RewriteRule ^public/?$ /prefeitura/ [R=301,L]
+RewriteRule ^public/(.*)$ /prefeitura/$1 [R=301,L]
+
+# Mantem arquivos reais de public acessiveis pela URL limpa.
+RewriteCond %{DOCUMENT_ROOT}/prefeitura/public/$1 -f [OR]
+RewriteCond %{DOCUMENT_ROOT}/prefeitura/public/$1 -d
+RewriteRule ^(.+)$ public/$1 [L]
+
+# Front controller.
+RewriteRule ^$ public/index.php [L]
+RewriteRule ^(.+)$ public/index.php [QSA,L]

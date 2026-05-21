@@ -22,17 +22,17 @@ class Usuario {
         return null;
     }
 
-    public function criar(string $nome, string $email, string $senha, string $tipo = 'cidadao', string $cpf = ''): bool {
+    public function criar(string $nome, string $email, string $senha, string $tipo = 'cidadao', string $cpf = '', string $telefone = ''): bool {
         $hash = password_hash($senha, PASSWORD_BCRYPT);
         $stmt = $this->db->prepare(
-            "INSERT INTO usuarios (nome, email, cpf, senha, tipo) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO usuarios (nome, email, telefone, cpf, senha, tipo) VALUES (?, ?, ?, ?, ?, ?)"
         );
-        return $stmt->execute([$nome, $email, $cpf ?: null, $hash, $tipo]);
+        return $stmt->execute([$nome, $email, $telefone ?: null, $cpf ?: null, $hash, $tipo]);
     }
 
     public function buscarPorId(int $id): ?array {
         $stmt = $this->db->prepare(
-            "SELECT id, nome, email, cpf, tipo, criado_em FROM usuarios WHERE id = ?"
+            "SELECT id, nome, email, telefone, cpf, tipo, criado_em FROM usuarios WHERE id = ?"
         );
         $stmt->execute([$id]);
         return $stmt->fetch() ?: null;
@@ -60,8 +60,26 @@ class Usuario {
 
     public function listarTodos(): array {
         $stmt = $this->db->query(
-            "SELECT id, nome, email, cpf, tipo, criado_em FROM usuarios ORDER BY criado_em DESC"
+            "SELECT id, nome, email, telefone, cpf, tipo, criado_em FROM usuarios ORDER BY criado_em DESC"
         );
         return $stmt->fetchAll();
+    }
+
+    public function atualizar(int $id, string $nome, string $email, string $telefone, string $cpf, string $tipo): bool {
+        $stmt = $this->db->prepare(
+            "UPDATE usuarios SET nome = ?, email = ?, telefone = ?, cpf = ?, tipo = ? WHERE id = ?"
+        );
+        return $stmt->execute([$nome, $email ?: null, $telefone ?: null, $cpf ?: null, $tipo, $id]);
+    }
+
+    public function atualizarSenha(int $id, string $senha): bool {
+        $hash = password_hash($senha, PASSWORD_BCRYPT);
+        $stmt = $this->db->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
+        return $stmt->execute([$hash, $id]);
+    }
+
+    public function excluir(int $id): bool {
+        $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = ?");
+        return $stmt->execute([$id]);
     }
 }

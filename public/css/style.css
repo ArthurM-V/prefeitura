@@ -705,18 +705,22 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
-  gap: 1rem;
+  min-height: 56px;
+  gap: 0.75rem;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
 }
 .admin-nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 2px;
+  justify-content: center;
 }
 .admin-nav-link {
-  padding: 0.3rem 0.85rem;
+  padding: 0.3rem 0.65rem;
   border-radius: var(--radius);
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: var(--transition);
 }
 .admin-nav-link:hover {
@@ -931,6 +935,34 @@ textarea {
   font-size: 0.82rem;
 }
 
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem 1rem;
+}
+.form-group-wide {
+  grid-column: 1 / -1;
+}
+.form-actions {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+.form-check-line {
+  display: flex;
+  align-items: end;
+}
+.form-check-line label {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.form-check-line input {
+  width: auto;
+}
+
 /* ================================================================
    DETALHE DO CHAMADO
    ================================================================ */
@@ -1116,13 +1148,17 @@ textarea {
     grid-template-columns: repeat(2, 1fr);
   }
   .admin-navbar-inner {
-    height: 52px;
+    min-height: 52px;
+    height: auto;
   }
   .admin-user-name {
     display: none;
   }
   .filter-bar {
     padding: 0.65rem;
+  }
+  .admin-form-grid {
+    grid-template-columns: 1fr;
   }
   .info-list {
     grid-template-columns: 1fr;

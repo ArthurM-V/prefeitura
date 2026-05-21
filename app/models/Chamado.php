@@ -21,12 +21,13 @@ class Chamado {
         $stmt = $this->db->prepare("
             SELECT c.*, u.nome as usuario_nome, u.email as usuario_email,
                    cat.nome as categoria_nome, s.nome as status_nome, s.ordem as status_ordem,
-                   o.nome as orgao_nome
+                   o.nome as orgao_nome, e.nome as empresa_nome
             FROM chamados c
             JOIN usuarios u ON c.usuario_id = u.id
             JOIN categorias cat ON c.categoria_id = cat.id
             JOIN status s ON c.status_id = s.id
             LEFT JOIN orgaos o ON c.orgao_id = o.id
+            LEFT JOIN empresas e ON c.empresa_id = e.id
             WHERE c.id = ?
         ");
         $stmt->execute([$id]);
@@ -36,12 +37,13 @@ class Chamado {
     public function listarTodos(array $filtros = []): array {
         $sql = "
             SELECT c.*, u.nome as usuario_nome, cat.nome as categoria_nome,
-                   s.nome as status_nome, o.nome as orgao_nome
+                   s.nome as status_nome, o.nome as orgao_nome, e.nome as empresa_nome
             FROM chamados c
             JOIN usuarios u ON c.usuario_id = u.id
             JOIN categorias cat ON c.categoria_id = cat.id
             JOIN status s ON c.status_id = s.id
             LEFT JOIN orgaos o ON c.orgao_id = o.id
+            LEFT JOIN empresas e ON c.empresa_id = e.id
             WHERE 1=1
         ";
         $params = [];
@@ -58,6 +60,10 @@ class Chamado {
             $sql .= " AND c.orgao_id = ?";
             $params[] = $filtros['orgao_id'];
         }
+        if (!empty($filtros['empresa_id'])) {
+            $sql .= " AND c.empresa_id = ?";
+            $params[] = $filtros['empresa_id'];
+        }
 
         $sql .= " ORDER BY c.data_abertura DESC";
         $stmt = $this->db->prepare($sql);
@@ -67,11 +73,13 @@ class Chamado {
 
     public function listarPorUsuario(int $usuarioId): array {
         $stmt = $this->db->prepare("
-            SELECT c.*, cat.nome as categoria_nome, s.nome as status_nome, o.nome as orgao_nome
+            SELECT c.*, cat.nome as categoria_nome, s.nome as status_nome,
+                   o.nome as orgao_nome, e.nome as empresa_nome
             FROM chamados c
             JOIN categorias cat ON c.categoria_id = cat.id
             JOIN status s ON c.status_id = s.id
             LEFT JOIN orgaos o ON c.orgao_id = o.id
+            LEFT JOIN empresas e ON c.empresa_id = e.id
             WHERE c.usuario_id = ?
             ORDER BY c.data_abertura DESC
         ");
@@ -82,11 +90,13 @@ class Chamado {
     public function listarResolvidos(): array {
         $stmt = $this->db->query("
             SELECT c.*, cat.nome as categoria_nome, s.nome as status_nome,
-                   o.nome as orgao_nome, f.mensagem as feedback_mensagem, i.caminho as imagem_admin
+                   o.nome as orgao_nome, e.nome as empresa_nome,
+                   f.mensagem as feedback_mensagem, i.caminho as imagem_admin
             FROM chamados c
             JOIN categorias cat ON c.categoria_id = cat.id
             JOIN status s ON c.status_id = s.id
             LEFT JOIN orgaos o ON c.orgao_id = o.id
+            LEFT JOIN empresas e ON c.empresa_id = e.id
             LEFT JOIN feedbacks f ON f.chamado_id = c.id
             LEFT JOIN imagens i ON i.chamado_id = c.id AND i.tipo = 'admin'
             WHERE c.status_id = 4
@@ -105,6 +115,40 @@ class Chamado {
     public function atribuirOrgao(int $id, int $orgaoId): bool {
         $stmt = $this->db->prepare("UPDATE chamados SET orgao_id = ? WHERE id = ?");
         return $stmt->execute([$orgaoId, $id]);
+    }
+
+    public function atribuirEmpresa(int $id, ?int $empresaId): bool {
+        $stmt = $this->db->prepare("UPDATE chamados SET empresa_id = ? WHERE id = ?");
+        return $stmt->execute([$empresaId ?: null, $id]);
+    }
+
+    public function atualizar(
+        int $id,
+        string $titulo,
+        string $descricao,
+        string $localizacao,
+        int $categoriaId,
+        int $statusId,
+        ?int $orgaoId = null,
+        ?int $empresaId = null
+    ): bool {
+        $fechamento = ($statusId == 4 || $statusId == 5) ? ", data_fechamento = NOW()" : ", data_fechamento = NULL";
+        $stmt = $this->db->prepare(
+            "UPDATE chamados
+             SET titulo = ?, descricao = ?, localizacao = ?, categoria_id = ?, status_id = ?,
+                 orgao_id = ?, empresa_id = ? $fechamento
+             WHERE id = ?"
+        );
+        return $stmt->execute([
+            $titulo,
+            $descricao,
+            $localizacao ?: null,
+            $categoriaId,
+            $statusId,
+            $orgaoId ?: null,
+            $empresaId ?: null,
+            $id,
+        ]);
     }
 
     public function excluir(int $id): bool {

@@ -7,7 +7,7 @@ require __DIR__ . '/header.php';
     <div class="login-card">
 
         <div class="login-brand">
-            <span class="login-brand-icon">🏛️</span>
+            <span class="login-brand-icon">ADM</span>
             <h1>Prefeitura Municipal</h1>
             <p>Painel Administrativo</p>
         </div>
@@ -38,7 +38,7 @@ require __DIR__ . '/header.php';
                     type="password"
                     id="senha"
                     name="senha"
-                    placeholder="••••••••"
+                    placeholder="********"
                     required
                 >
             </div>
@@ -49,10 +49,11 @@ require __DIR__ . '/header.php';
         </form>
 
         <div class="login-back">
-            <a href="<?= BASE_URL ?>/">← Voltar ao portal</a>
+            <a href="<?= BASE_URL ?>/">Voltar ao portal</a>
         </div>
 
     </div>
 </main>
 
-<?php require __DIR__ . '/footer.php'; ?>
+</body>
+</html>

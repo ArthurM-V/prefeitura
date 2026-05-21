@@ -3,21 +3,11 @@ $pageTitle = 'Criar conta';
 require __DIR__ . '/../shared/header.php';
 ?>
 
-<header class="navbar">
-    <div class="container navbar-inner">
-        <a href="<?= BASE_URL ?>/" class="navbar-brand">
-            <span class="navbar-brand-icon">🏛️</span>
-            <span>Prefeitura Municipal</span>
-        </a>
-        <a href="<?= BASE_URL ?>/entrar" class="btn btn-outline btn-sm on-dark">Já tenho conta</a>
-    </div>
-</header>
-
 <main class="login-page">
     <div class="login-card" style="max-width:480px">
 
         <div class="login-brand">
-            <span class="login-brand-icon">📋</span>
+            <span class="login-brand-icon">+</span>
             <h1>Criar conta</h1>
             <p>Cadastre-se para abrir e acompanhar chamados</p>
         </div>
@@ -46,6 +36,16 @@ require __DIR__ . '/../shared/header.php';
                 </div>
 
                 <div class="form-group">
+                    <label for="telefone">Telefone <span class="required">*</span></label>
+                    <input type="text" id="telefone" name="telefone"
+                        placeholder="(00) 00000-0000"
+                        value="<?= htmlspecialchars($_POST['telefone'] ?? '') ?>"
+                        required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
                     <label for="cpf">CPF <span class="required">*</span></label>
                     <input type="text" id="cpf" name="cpf"
                         placeholder="000.000.000-00"
@@ -59,7 +59,7 @@ require __DIR__ . '/../shared/header.php';
                 <div class="form-group">
                     <label for="senha">Senha <span class="required">*</span></label>
                     <input type="password" id="senha" name="senha"
-                        placeholder="Mínimo 6 caracteres"
+                        placeholder="Minimo 6 caracteres"
                         required>
                 </div>
 
@@ -77,13 +77,14 @@ require __DIR__ . '/../shared/header.php';
         </form>
 
         <div class="login-back" style="margin-top:.75rem">
-            Já tem conta? <a href="<?= BASE_URL ?>/entrar">Entrar</a>
+            Ja tem conta? <a href="<?= BASE_URL ?>/entrar">Entrar</a>
         </div>
         <div class="login-back">
-            <a href="<?= BASE_URL ?>/">← Voltar ao portal</a>
+            <a href="<?= BASE_URL ?>/">Voltar ao portal</a>
         </div>
 
     </div>
 </main>
 
-<?php require __DIR__ . '/../shared/footer.php'; ?>
+</body>
+</html>

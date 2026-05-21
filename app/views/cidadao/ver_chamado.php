@@ -14,7 +14,6 @@ $statusColors = [
 <header class="navbar">
     <div class="container navbar-inner">
         <a href="<?= BASE_URL ?>/" class="navbar-brand">
-            <span class="navbar-brand-icon">🏛️</span>
             <span>Prefeitura Municipal</span>
         </a>
         <div style="display:flex;gap:.5rem;align-items:center">
@@ -64,6 +63,11 @@ $statusColors = [
                     <dd><?= $chamado['orgao_nome']
                         ? htmlspecialchars($chamado['orgao_nome'])
                         : '<em class="text-muted">Ainda não atribuído</em>' ?></dd>
+
+                    <dt>Empresa parceira</dt>
+                    <dd><?= $chamado['empresa_nome']
+                        ? htmlspecialchars($chamado['empresa_nome'])
+                        : '<em class="text-muted">Ainda não atribuída</em>' ?></dd>
                 </dl>
 
                 <!-- Imagem enviada pelo cidadão -->

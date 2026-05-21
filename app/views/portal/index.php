@@ -9,7 +9,6 @@ $logado = isLoggedIn() && !isAdmin();
 <header class="navbar">
     <div class="container navbar-inner">
         <a href="<?= BASE_URL ?>/" class="navbar-brand">
-            <span class="navbar-brand-icon">🏛️</span>
             <span>Prefeitura Municipal</span>
         </a>
         <div class="navbar-actions">
@@ -62,6 +61,10 @@ $logado = isLoggedIn() && !isAdmin();
 
                         <?php if (!empty($chamado['localizacao'])): ?>
                             <p class="card-meta">📍 <?= htmlspecialchars($chamado['localizacao']) ?></p>
+                        <?php endif; ?>
+
+                        <?php if (!empty($chamado['empresa_nome'])): ?>
+                            <p class="card-meta">Empresa parceira: <?= htmlspecialchars($chamado['empresa_nome']) ?></p>
                         <?php endif; ?>
 
                         <?php if (!empty($chamado['imagem_admin'])): ?>
