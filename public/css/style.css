@@ -461,6 +461,16 @@ textarea {
   margin: 0 auto 2rem;
   line-height: 1.7;
 }
+.hero-admin-context {
+  display: inline-block;
+  margin: -0.6rem auto 1.6rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.85rem;
+}
 .hero-actions {
   display: flex;
   gap: 0.75rem;
@@ -489,6 +499,14 @@ textarea {
   font-size: 0.9rem;
   color: var(--text-muted);
   margin-bottom: 2rem;
+}
+.admin-context-note {
+  text-align: center;
+}
+.admin-context-note .section-sub {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 540px;
 }
 
 /* ================================================================
@@ -939,6 +957,48 @@ textarea {
   font-size: 0.78rem;
   color: var(--text-muted);
   margin-top: 0.65rem;
+}
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.pagination-link {
+  display: inline-flex;
+  min-width: 34px;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: var(--transition);
+}
+.pagination-link:hover {
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+.pagination-link.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+.pagination-link.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.pagination-link.disabled:hover {
+  border-color: var(--border);
+  background: var(--bg-white);
+  color: var(--text-secondary);
 }
 .link-primary {
   color: var(--primary);

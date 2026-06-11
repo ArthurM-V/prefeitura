@@ -38,6 +38,34 @@ function sanitize(string $str): string {
     return htmlspecialchars(strip_tags(trim($str)), ENT_QUOTES, 'UTF-8');
 }
 
+function formatarTelefone(?string $telefone): string {
+    $telefone = trim((string)$telefone);
+    if ($telefone === '') {
+        return '';
+    }
+
+    $digitos = preg_replace('/\D/', '', $telefone);
+    if (strlen($digitos) === 11) {
+        return sprintf(
+            '(%s) %s-%s',
+            substr($digitos, 0, 2),
+            substr($digitos, 2, 5),
+            substr($digitos, 7, 4)
+        );
+    }
+
+    if (strlen($digitos) === 10) {
+        return sprintf(
+            '(%s) %s-%s',
+            substr($digitos, 0, 2),
+            substr($digitos, 2, 4),
+            substr($digitos, 6, 4)
+        );
+    }
+
+    return $telefone;
+}
+
 function jsonResponse(array $data, int $code = 200): void {
     http_response_code($code);
     header('Content-Type: application/json');

@@ -78,7 +78,7 @@ require __DIR__ . '/../shared/header.php';
                                     <div class="activity-body">
                                         <p class="activity-desc">
                                             <strong><?= htmlspecialchars($h['tipo_acao']) ?></strong>
-                                            — <?= htmlspecialchars($h['chamado_titulo']) ?>
+                                            - <?= htmlspecialchars($h['chamado_titulo']) ?>
                                         </p>
                                         <p class="activity-meta">
                                             <?= htmlspecialchars($h['usuario_nome']) ?>
@@ -92,7 +92,7 @@ require __DIR__ . '/../shared/header.php';
                 </div>
             </section>
 
-        </div><!-- /.dashboard-grid -->
+        </div>
 
         <!-- ===== ATALHO PARA CHAMADOS ===== -->
         <div class="dashboard-actions">

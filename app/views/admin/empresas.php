@@ -8,7 +8,7 @@ require __DIR__ . '/navbar.php';
     <div class="container">
         <div class="page-header">
             <h2>Empresas parceiras</h2>
-            <p>Gerencie terceirizadas que auxiliam na execucao dos chamados.</p>
+            <p>Gerencie terceirizadas que auxiliam na execução dos chamados.</p>
         </div>
 
         <section class="card" style="margin-bottom:1.25rem">
@@ -33,11 +33,11 @@ require __DIR__ . '/navbar.php';
                         <input type="text" name="telefone" id="empresa-telefone">
                     </div>
                     <div class="form-group">
-                        <label for="empresa-responsavel">Responsavel</label>
+                        <label for="empresa-responsavel">Responsável</label>
                         <input type="text" name="responsavel" id="empresa-responsavel">
                     </div>
                     <div class="form-group">
-                        <label for="empresa-area">Area de atuacao</label>
+                        <label for="empresa-area">Área de atuação</label>
                         <input type="text" name="area_atuacao" id="empresa-area">
                     </div>
                     <div class="form-group form-check-line">
@@ -62,9 +62,9 @@ require __DIR__ . '/navbar.php';
                         <th>Nome</th>
                         <th>CNPJ</th>
                         <th>Contato</th>
-                        <th>Area</th>
+                        <th>Área</th>
                         <th>Status</th>
-                        <th>Acoes</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,7 +81,7 @@ require __DIR__ . '/navbar.php';
                             <td>
                                 <?= htmlspecialchars($empresa['email'] ?? '') ?>
                                 <?php if (!empty($empresa['telefone'])): ?>
-                                    <div class="text-muted text-sm"><?= htmlspecialchars($empresa['telefone']) ?></div>
+                                    <div class="text-muted text-sm"><?= htmlspecialchars(formatarTelefone($empresa['telefone'])) ?></div>
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($empresa['area_atuacao'] ?? '') ?></td>
@@ -101,6 +101,39 @@ require __DIR__ . '/navbar.php';
                 </tbody>
             </table>
         </div>
+        <?php
+            $primeiroItem = (($paginaAtual - 1) * $porPagina) + 1;
+            $ultimoItem = min($paginaAtual * $porPagina, $totalItens);
+        ?>
+        <p class="table-count">
+            Exibindo <?= $primeiroItem ?>-<?= $ultimoItem ?> de <?= $totalItens ?> empresa(s).
+        </p>
+
+        <?php if ($totalPaginas > 1): ?>
+            <nav class="pagination" aria-label="Paginação de empresas">
+                <?php if ($paginaAtual > 1): ?>
+                    <a href="<?= BASE_URL ?>/admin/empresas?page=<?= $paginaAtual - 1 ?>" class="pagination-link">Anterior</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Anterior</span>
+                <?php endif; ?>
+
+                <?php for ($page = 1; $page <= $totalPaginas; $page++): ?>
+                    <a
+                        href="<?= BASE_URL ?>/admin/empresas?page=<?= $page ?>"
+                        class="pagination-link <?= $page === $paginaAtual ? 'active' : '' ?>"
+                        <?= $page === $paginaAtual ? 'aria-current="page"' : '' ?>
+                    >
+                        <?= $page ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($paginaAtual < $totalPaginas): ?>
+                    <a href="<?= BASE_URL ?>/admin/empresas?page=<?= $paginaAtual + 1 ?>" class="pagination-link">Próxima</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Próxima</span>
+                <?php endif; ?>
+            </nav>
+        <?php endif; ?>
     </div>
 </main>
 

@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Orgaos';
+$pageTitle = 'Órgãos';
 require __DIR__ . '/../shared/header.php';
 require __DIR__ . '/navbar.php';
 ?>
@@ -7,12 +7,12 @@ require __DIR__ . '/navbar.php';
 <main class="admin-main">
     <div class="container">
         <div class="page-header">
-            <h2>Orgaos</h2>
-            <p>Gerencie secretarias e setores responsaveis pelos chamados.</p>
+            <h2>Órgãos</h2>
+            <p>Gerencie secretarias e setores responsáveis pelos chamados.</p>
         </div>
 
         <section class="card" style="margin-bottom:1.25rem">
-            <div class="card-header-admin"><h3 id="form-title">Novo orgao</h3></div>
+            <div class="card-header-admin"><h3 id="form-title">Novo órgão</h3></div>
             <div class="card-body">
                 <form id="form-orgao" class="admin-form-grid">
                     <input type="hidden" name="id" id="orgao-id">
@@ -21,7 +21,7 @@ require __DIR__ . '/navbar.php';
                         <input type="text" name="nome" id="orgao-nome" required>
                     </div>
                     <div class="form-group form-group-wide">
-                        <label for="orgao-descricao">Descricao</label>
+                        <label for="orgao-descricao">Descrição</label>
                         <textarea name="descricao" id="orgao-descricao" rows="3"></textarea>
                     </div>
                     <div class="form-actions form-group-wide">
@@ -38,8 +38,8 @@ require __DIR__ . '/navbar.php';
                     <tr>
                         <th>#</th>
                         <th>Nome</th>
-                        <th>Descricao</th>
-                        <th>Acoes</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,6 +59,39 @@ require __DIR__ . '/navbar.php';
                 </tbody>
             </table>
         </div>
+        <?php
+            $primeiroItem = (($paginaAtual - 1) * $porPagina) + 1;
+            $ultimoItem = min($paginaAtual * $porPagina, $totalItens);
+        ?>
+        <p class="table-count">
+            Exibindo <?= $primeiroItem ?>-<?= $ultimoItem ?> de <?= $totalItens ?> órgão(s).
+        </p>
+
+        <?php if ($totalPaginas > 1): ?>
+            <nav class="pagination" aria-label="Paginação de órgãos">
+                <?php if ($paginaAtual > 1): ?>
+                    <a href="<?= BASE_URL ?>/admin/orgaos?page=<?= $paginaAtual - 1 ?>" class="pagination-link">Anterior</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Anterior</span>
+                <?php endif; ?>
+
+                <?php for ($page = 1; $page <= $totalPaginas; $page++): ?>
+                    <a
+                        href="<?= BASE_URL ?>/admin/orgaos?page=<?= $page ?>"
+                        class="pagination-link <?= $page === $paginaAtual ? 'active' : '' ?>"
+                        <?= $page === $paginaAtual ? 'aria-current="page"' : '' ?>
+                    >
+                        <?= $page ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($paginaAtual < $totalPaginas): ?>
+                    <a href="<?= BASE_URL ?>/admin/orgaos?page=<?= $paginaAtual + 1 ?>" class="pagination-link">Próxima</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Próxima</span>
+                <?php endif; ?>
+            </nav>
+        <?php endif; ?>
     </div>
 </main>
 
@@ -66,7 +99,7 @@ require __DIR__ . '/navbar.php';
 const form = document.getElementById('form-orgao');
 
 function editar(orgao) {
-    document.getElementById('form-title').textContent = 'Editar orgao';
+    document.getElementById('form-title').textContent = 'Editar órgão';
     document.getElementById('orgao-id').value = orgao.id;
     document.getElementById('orgao-nome').value = orgao.nome || '';
     document.getElementById('orgao-descricao').value = orgao.descricao || '';
@@ -76,7 +109,7 @@ function editar(orgao) {
 function limparFormulario() {
     form.reset();
     document.getElementById('orgao-id').value = '';
-    document.getElementById('form-title').textContent = 'Novo orgao';
+    document.getElementById('form-title').textContent = 'Novo órgão';
 }
 
 form.addEventListener('submit', async (event) => {
@@ -91,7 +124,7 @@ form.addEventListener('submit', async (event) => {
 });
 
 async function excluir(id) {
-    if (!confirm('Deseja excluir este orgao?')) return;
+    if (!confirm('Deseja excluir este órgão?')) return;
     const body = new URLSearchParams({ id });
     const resp = await fetch('<?= BASE_URL ?>/admin/orgaos/excluir', {
         method: 'POST',

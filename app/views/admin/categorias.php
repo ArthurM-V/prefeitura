@@ -21,7 +21,7 @@ require __DIR__ . '/navbar.php';
                         <input type="text" name="nome" id="categoria-nome" required>
                     </div>
                     <div class="form-group form-group-wide">
-                        <label for="categoria-descricao">Descricao</label>
+                        <label for="categoria-descricao">Descrição</label>
                         <textarea name="descricao" id="categoria-descricao" rows="3"></textarea>
                     </div>
                     <div class="form-actions form-group-wide">
@@ -38,8 +38,8 @@ require __DIR__ . '/navbar.php';
                     <tr>
                         <th>#</th>
                         <th>Nome</th>
-                        <th>Descricao</th>
-                        <th>Acoes</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,6 +59,39 @@ require __DIR__ . '/navbar.php';
                 </tbody>
             </table>
         </div>
+        <?php
+            $primeiroItem = (($paginaAtual - 1) * $porPagina) + 1;
+            $ultimoItem = min($paginaAtual * $porPagina, $totalItens);
+        ?>
+        <p class="table-count">
+            Exibindo <?= $primeiroItem ?>-<?= $ultimoItem ?> de <?= $totalItens ?> categoria(s).
+        </p>
+
+        <?php if ($totalPaginas > 1): ?>
+            <nav class="pagination" aria-label="Paginação de categorias">
+                <?php if ($paginaAtual > 1): ?>
+                    <a href="<?= BASE_URL ?>/admin/categorias?page=<?= $paginaAtual - 1 ?>" class="pagination-link">Anterior</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Anterior</span>
+                <?php endif; ?>
+
+                <?php for ($page = 1; $page <= $totalPaginas; $page++): ?>
+                    <a
+                        href="<?= BASE_URL ?>/admin/categorias?page=<?= $page ?>"
+                        class="pagination-link <?= $page === $paginaAtual ? 'active' : '' ?>"
+                        <?= $page === $paginaAtual ? 'aria-current="page"' : '' ?>
+                    >
+                        <?= $page ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($paginaAtual < $totalPaginas): ?>
+                    <a href="<?= BASE_URL ?>/admin/categorias?page=<?= $paginaAtual + 1 ?>" class="pagination-link">Próxima</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Próxima</span>
+                <?php endif; ?>
+            </nav>
+        <?php endif; ?>
     </div>
 </main>
 

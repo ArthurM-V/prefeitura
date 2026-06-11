@@ -90,7 +90,43 @@ $statusColors = [
                     </tbody>
                 </table>
             </div>
-            <p class="table-count"><?= count($chamados) ?> chamado(s) no total.</p>
+            <?php
+                $primeiroItem = (($paginaAtual - 1) * $porPagina) + 1;
+                $ultimoItem = min($paginaAtual * $porPagina, $totalChamados);
+            ?>
+            <p class="table-count">
+                Exibindo <?= $primeiroItem ?>-<?= $ultimoItem ?> de <?= $totalChamados ?> chamado(s) no total.
+            </p>
+
+            <?php if ($totalPaginas > 1): ?>
+                <nav class="pagination" aria-label="Paginação de chamados">
+                    <?php if ($paginaAtual > 1): ?>
+                        <a href="<?= BASE_URL ?>/cidadao/dashboard?page=<?= $paginaAtual - 1 ?>" class="pagination-link">
+                            Anterior
+                        </a>
+                    <?php else: ?>
+                        <span class="pagination-link disabled">Anterior</span>
+                    <?php endif; ?>
+
+                    <?php for ($page = 1; $page <= $totalPaginas; $page++): ?>
+                        <a
+                            href="<?= BASE_URL ?>/cidadao/dashboard?page=<?= $page ?>"
+                            class="pagination-link <?= $page === $paginaAtual ? 'active' : '' ?>"
+                            <?= $page === $paginaAtual ? 'aria-current="page"' : '' ?>
+                        >
+                            <?= $page ?>
+                        </a>
+                    <?php endfor; ?>
+
+                    <?php if ($paginaAtual < $totalPaginas): ?>
+                        <a href="<?= BASE_URL ?>/cidadao/dashboard?page=<?= $paginaAtual + 1 ?>" class="pagination-link">
+                            Próxima
+                        </a>
+                    <?php else: ?>
+                        <span class="pagination-link disabled">Próxima</span>
+                    <?php endif; ?>
+                </nav>
+            <?php endif; ?>
         <?php endif; ?>
 
     </div>

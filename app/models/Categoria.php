@@ -9,8 +9,19 @@ class Categoria {
         $this->db = Database::getConnection();
     }
 
-    public function listarTodas(): array {
-        return $this->db->query("SELECT * FROM categorias ORDER BY nome")->fetchAll();
+    public function listarTodas(?int $limit = null, int $offset = 0): array {
+        $sql = "SELECT * FROM categorias ORDER BY nome";
+        if ($limit !== null) {
+            $limit = max(1, $limit);
+            $offset = max(0, $offset);
+            $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        }
+
+        return $this->db->query($sql)->fetchAll();
+    }
+
+    public function contarTodas(): int {
+        return (int) $this->db->query("SELECT COUNT(*) FROM categorias")->fetchColumn();
     }
 
     public function buscarPorId(int $id): ?array {

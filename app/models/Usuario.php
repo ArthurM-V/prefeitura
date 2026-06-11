@@ -58,11 +58,20 @@ class Usuario {
         return (bool) $stmt->fetch();
     }
 
-    public function listarTodos(): array {
-        $stmt = $this->db->query(
-            "SELECT id, nome, email, telefone, cpf, tipo, criado_em FROM usuarios ORDER BY criado_em DESC"
-        );
+    public function listarTodos(?int $limit = null, int $offset = 0): array {
+        $sql = "SELECT id, nome, email, telefone, cpf, tipo, criado_em FROM usuarios ORDER BY criado_em DESC";
+        if ($limit !== null) {
+            $limit = max(1, $limit);
+            $offset = max(0, $offset);
+            $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        }
+
+        $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
+    }
+
+    public function contarTodos(): int {
+        return (int) $this->db->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
     }
 
     public function atualizar(int $id, string $nome, string $email, string $telefone, string $cpf, string $tipo): bool {

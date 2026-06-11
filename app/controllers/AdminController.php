@@ -13,6 +13,15 @@ require_once __DIR__ . '/../models/Usuario.php';
 
 class AdminController {
 
+    private function calcularPaginacao(int $totalItens, int $porPagina = 10): array {
+        $paginaAtual = max(1, (int)($_GET['page'] ?? 1));
+        $totalPaginas = max(1, (int)ceil($totalItens / $porPagina));
+        $paginaAtual = min($paginaAtual, $totalPaginas);
+        $offset = ($paginaAtual - 1) * $porPagina;
+
+        return [$porPagina, $paginaAtual, $totalPaginas, $offset];
+    }
+
     public function dashboard(): void {
         requireAdmin();
         $chamadoModel = new Chamado();
@@ -38,8 +47,16 @@ class AdminController {
             'orgao_id'     => (int)($_GET['orgao_id'] ?? 0),
             'empresa_id'   => (int)($_GET['empresa_id'] ?? 0),
         ];
+        $filtrosAtivos = array_filter($filtros);
 
-        $chamados   = $chamadoModel->listarTodos(array_filter($filtros));
+        $porPagina = 10;
+        $paginaAtual = max(1, (int)($_GET['page'] ?? 1));
+        $totalChamados = $chamadoModel->contarTodos($filtrosAtivos);
+        $totalPaginas = max(1, (int)ceil($totalChamados / $porPagina));
+        $paginaAtual = min($paginaAtual, $totalPaginas);
+        $offset = ($paginaAtual - 1) * $porPagina;
+
+        $chamados   = $chamadoModel->listarTodos($filtrosAtivos, $porPagina, $offset);
         $statuses   = $statusModel->listarTodos();
         $categorias = $categoriaModel->listarTodas();
         $orgaos     = $orgaoModel->listarTodos();
@@ -120,11 +137,11 @@ class AdminController {
 
     public function atribuirEmpresa(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $chamadoId = (int)($_POST['chamado_id'] ?? 0);
         $empresaId = (int)($_POST['empresa_id'] ?? 0);
-        if (!$chamadoId) jsonResponse(['success' => false, 'message' => 'Chamado invalido.'], 422);
+        if (!$chamadoId) jsonResponse(['success' => false, 'message' => 'Chamado inválido.'], 422);
 
         $chamadoModel   = new Chamado();
         $empresaModel   = new Empresa();
@@ -132,12 +149,12 @@ class AdminController {
 
         $empresa = $empresaId ? $empresaModel->buscarPorId($empresaId) : null;
         if ($empresaId && !$empresa) {
-            jsonResponse(['success' => false, 'message' => 'Empresa nao encontrada.'], 404);
+            jsonResponse(['success' => false, 'message' => 'Empresa não encontrada.'], 404);
         }
 
         if ($chamadoModel->atribuirEmpresa($chamadoId, $empresaId ?: null)) {
             $descricao = $empresa
-                ? "Chamado atribuido a empresa parceira: {$empresa['nome']}."
+                ? "Chamado atribuído à empresa parceira: {$empresa['nome']}."
                 : 'Empresa parceira removida do chamado.';
             $historicoModel->registrar('Empresa', $descricao, $_SESSION['usuario_id'], $chamadoId);
             jsonResponse(['success' => true, 'message' => 'Empresa parceira atualizada com sucesso.']);
@@ -147,7 +164,7 @@ class AdminController {
 
     public function atualizarChamado(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $chamadoId   = (int)($_POST['chamado_id'] ?? 0);
         $titulo      = sanitize($_POST['titulo'] ?? '');
@@ -159,14 +176,14 @@ class AdminController {
         $empresaId   = (int)($_POST['empresa_id'] ?? 0);
 
         if (!$chamadoId || !$titulo || !$descricao || !$categoriaId || !$statusId) {
-            jsonResponse(['success' => false, 'message' => 'Preencha todos os campos obrigatorios.'], 422);
+            jsonResponse(['success' => false, 'message' => 'Preencha todos os campos obrigatórios.'], 422);
         }
 
         $chamadoModel   = new Chamado();
         $historicoModel = new Historico();
 
         if ($chamadoModel->atualizar($chamadoId, $titulo, $descricao, $localizacao, $categoriaId, $statusId, $orgaoId ?: null, $empresaId ?: null)) {
-            $historicoModel->registrar('Edicao', 'Dados do chamado atualizados pelo administrador.', $_SESSION['usuario_id'], $chamadoId);
+            $historicoModel->registrar('Edição', 'Dados do chamado atualizados pelo administrador.', $_SESSION['usuario_id'], $chamadoId);
             jsonResponse(['success' => true, 'message' => 'Chamado atualizado com sucesso.']);
         }
         jsonResponse(['success' => false, 'message' => 'Erro ao atualizar chamado.'], 500);
@@ -221,13 +238,15 @@ class AdminController {
     public function usuarios(): void {
         requireAdmin();
         $usuarioModel = new Usuario();
-        $usuarios = $usuarioModel->listarTodos();
+        $totalItens = $usuarioModel->contarTodos();
+        [$porPagina, $paginaAtual, $totalPaginas, $offset] = $this->calcularPaginacao($totalItens);
+        $usuarios = $usuarioModel->listarTodos($porPagina, $offset);
         require __DIR__ . '/../views/admin/usuarios.php';
     }
 
     public function salvarUsuario(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id       = (int)($_POST['id'] ?? 0);
         $nome     = sanitize($_POST['nome'] ?? '');
@@ -238,7 +257,7 @@ class AdminController {
         $senha    = $_POST['senha'] ?? '';
 
         if (!$nome || !$email || !in_array($tipo, ['cidadao', 'admin'], true)) {
-            jsonResponse(['success' => false, 'message' => 'Dados invalidos.'], 422);
+            jsonResponse(['success' => false, 'message' => 'Dados inválidos.'], 422);
         }
 
         $usuarioModel = new Usuario();
@@ -251,49 +270,51 @@ class AdminController {
             if ($ok && $senha) $ok = $usuarioModel->atualizarSenha($id, $senha);
         } else {
             if (strlen($senha) < 6) {
-                jsonResponse(['success' => false, 'message' => 'Senha deve ter no minimo 6 caracteres.'], 422);
+                jsonResponse(['success' => false, 'message' => 'Senha deve ter no mínimo 6 caracteres.'], 422);
             }
             $ok = $usuarioModel->criar($nome, $email, $senha, $tipo, $cpf, $telefone);
         }
 
         jsonResponse([
             'success' => (bool)$ok,
-            'message' => $ok ? 'Usuario salvo com sucesso.' : 'Erro ao salvar usuario.',
+            'message' => $ok ? 'Usuário salvo com sucesso.' : 'Erro ao salvar usuário.',
         ], $ok ? 200 : 500);
     }
 
     public function excluirUsuario(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id = (int)($_POST['id'] ?? 0);
         if (!$id || $id === (int)$_SESSION['usuario_id']) {
-            jsonResponse(['success' => false, 'message' => 'Usuario invalido para exclusao.'], 422);
+            jsonResponse(['success' => false, 'message' => 'Usuário inválido para exclusão.'], 422);
         }
 
         $usuarioModel = new Usuario();
         $ok = $usuarioModel->excluir($id);
         jsonResponse([
             'success' => $ok,
-            'message' => $ok ? 'Usuario excluido com sucesso.' : 'Erro ao excluir usuario.',
+            'message' => $ok ? 'Usuário excluído com sucesso.' : 'Erro ao excluir usuário.',
         ], $ok ? 200 : 500);
     }
 
     public function categorias(): void {
         requireAdmin();
         $categoriaModel = new Categoria();
-        $categorias = $categoriaModel->listarTodas();
+        $totalItens = $categoriaModel->contarTodas();
+        [$porPagina, $paginaAtual, $totalPaginas, $offset] = $this->calcularPaginacao($totalItens);
+        $categorias = $categoriaModel->listarTodas($porPagina, $offset);
         require __DIR__ . '/../views/admin/categorias.php';
     }
 
     public function salvarCategoria(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id        = (int)($_POST['id'] ?? 0);
         $nome      = sanitize($_POST['nome'] ?? '');
         $descricao = sanitize($_POST['descricao'] ?? '');
-        if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome e obrigatorio.'], 422);
+        if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome é obrigatório.'], 422);
 
         $categoriaModel = new Categoria();
         $ok = $id
@@ -308,34 +329,36 @@ class AdminController {
 
     public function excluirCategoria(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id = (int)($_POST['id'] ?? 0);
-        if (!$id) jsonResponse(['success' => false, 'message' => 'Categoria invalida.'], 422);
+        if (!$id) jsonResponse(['success' => false, 'message' => 'Categoria inválida.'], 422);
 
         $categoriaModel = new Categoria();
         $ok = $categoriaModel->excluir($id);
         jsonResponse([
             'success' => $ok,
-            'message' => $ok ? 'Categoria excluida com sucesso.' : 'Erro ao excluir categoria.',
+            'message' => $ok ? 'Categoria excluída com sucesso.' : 'Erro ao excluir categoria.',
         ], $ok ? 200 : 500);
     }
 
     public function orgaos(): void {
         requireAdmin();
         $orgaoModel = new Orgao();
-        $orgaos = $orgaoModel->listarTodos();
+        $totalItens = $orgaoModel->contarTodos();
+        [$porPagina, $paginaAtual, $totalPaginas, $offset] = $this->calcularPaginacao($totalItens);
+        $orgaos = $orgaoModel->listarTodos($porPagina, $offset);
         require __DIR__ . '/../views/admin/orgaos.php';
     }
 
     public function salvarOrgao(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id        = (int)($_POST['id'] ?? 0);
         $nome      = sanitize($_POST['nome'] ?? '');
         $descricao = sanitize($_POST['descricao'] ?? '');
-        if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome e obrigatorio.'], 422);
+        if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome é obrigatório.'], 422);
 
         $orgaoModel = new Orgao();
         $ok = $id
@@ -344,35 +367,37 @@ class AdminController {
 
         jsonResponse([
             'success' => $ok,
-            'message' => $ok ? 'Orgao salvo com sucesso.' : 'Erro ao salvar orgao.',
+            'message' => $ok ? 'Órgão salvo com sucesso.' : 'Erro ao salvar órgão.',
         ], $ok ? 200 : 500);
     }
 
     public function excluirOrgao(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id = (int)($_POST['id'] ?? 0);
-        if (!$id) jsonResponse(['success' => false, 'message' => 'Orgao invalido.'], 422);
+        if (!$id) jsonResponse(['success' => false, 'message' => 'Órgão inválido.'], 422);
 
         $orgaoModel = new Orgao();
         $ok = $orgaoModel->excluir($id);
         jsonResponse([
             'success' => $ok,
-            'message' => $ok ? 'Orgao excluido com sucesso.' : 'Erro ao excluir orgao.',
+            'message' => $ok ? 'Órgão excluído com sucesso.' : 'Erro ao excluir órgão.',
         ], $ok ? 200 : 500);
     }
 
     public function empresas(): void {
         requireAdmin();
         $empresaModel = new Empresa();
-        $empresas = $empresaModel->listarTodas();
+        $totalItens = $empresaModel->contarTodas();
+        [$porPagina, $paginaAtual, $totalPaginas, $offset] = $this->calcularPaginacao($totalItens);
+        $empresas = $empresaModel->listarTodas(false, $porPagina, $offset);
         require __DIR__ . '/../views/admin/empresas.php';
     }
 
     public function salvarEmpresa(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id          = (int)($_POST['id'] ?? 0);
         $nome        = sanitize($_POST['nome'] ?? '');
@@ -383,7 +408,7 @@ class AdminController {
         $areaAtuacao = sanitize($_POST['area_atuacao'] ?? '');
         $ativo       = isset($_POST['ativo']) ? 1 : 0;
 
-        if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome e obrigatorio.'], 422);
+        if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome é obrigatório.'], 422);
 
         $empresaModel = new Empresa();
         $ok = $id
@@ -398,16 +423,16 @@ class AdminController {
 
     public function excluirEmpresa(): void {
         requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Metodo invalido.'], 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Método inválido.'], 405);
 
         $id = (int)($_POST['id'] ?? 0);
-        if (!$id) jsonResponse(['success' => false, 'message' => 'Empresa invalida.'], 422);
+        if (!$id) jsonResponse(['success' => false, 'message' => 'Empresa inválida.'], 422);
 
         $empresaModel = new Empresa();
         $ok = $empresaModel->excluir($id);
         jsonResponse([
             'success' => $ok,
-            'message' => $ok ? 'Empresa excluida com sucesso.' : 'Erro ao excluir empresa.',
+            'message' => $ok ? 'Empresa excluída com sucesso.' : 'Erro ao excluir empresa.',
         ], $ok ? 200 : 500);
     }
 }

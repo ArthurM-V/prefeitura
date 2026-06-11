@@ -131,7 +131,47 @@ $statusColors = [
                     </tbody>
                 </table>
             </div>
-            <p class="table-count"><?= count($chamados) ?> chamado(s) encontrado(s).</p>
+            <?php
+                $primeiroItem = (($paginaAtual - 1) * $porPagina) + 1;
+                $ultimoItem = min($paginaAtual * $porPagina, $totalChamados);
+                $queryBase = array_filter($filtros);
+            ?>
+            <p class="table-count">
+                Exibindo <?= $primeiroItem ?>-<?= $ultimoItem ?> de <?= $totalChamados ?> chamado(s) encontrado(s).
+            </p>
+
+            <?php if ($totalPaginas > 1): ?>
+                <nav class="pagination" aria-label="Paginação de chamados">
+                    <?php if ($paginaAtual > 1): ?>
+                        <?php $prevQuery = http_build_query(array_merge($queryBase, ['page' => $paginaAtual - 1])); ?>
+                        <a href="<?= BASE_URL ?>/admin/chamados?<?= $prevQuery ?>" class="pagination-link">
+                            Anterior
+                        </a>
+                    <?php else: ?>
+                        <span class="pagination-link disabled">Anterior</span>
+                    <?php endif; ?>
+
+                    <?php for ($page = 1; $page <= $totalPaginas; $page++): ?>
+                        <?php $pageQuery = http_build_query(array_merge($queryBase, ['page' => $page])); ?>
+                        <a
+                            href="<?= BASE_URL ?>/admin/chamados?<?= $pageQuery ?>"
+                            class="pagination-link <?= $page === $paginaAtual ? 'active' : '' ?>"
+                            <?= $page === $paginaAtual ? 'aria-current="page"' : '' ?>
+                        >
+                            <?= $page ?>
+                        </a>
+                    <?php endfor; ?>
+
+                    <?php if ($paginaAtual < $totalPaginas): ?>
+                        <?php $nextQuery = http_build_query(array_merge($queryBase, ['page' => $paginaAtual + 1])); ?>
+                        <a href="<?= BASE_URL ?>/admin/chamados?<?= $nextQuery ?>" class="pagination-link">
+                            Próxima
+                        </a>
+                    <?php else: ?>
+                        <span class="pagination-link disabled">Próxima</span>
+                    <?php endif; ?>
+                </nav>
+            <?php endif; ?>
         <?php endif; ?>
 
     </div>

@@ -25,7 +25,6 @@ require __DIR__ . '/header.php';
                     type="email"
                     id="identificador"
                     name="identificador"
-                    placeholder="admin@prefeitura.gov.br"
                     value="<?= htmlspecialchars($_POST['identificador'] ?? '') ?>"
                     required
                     autofocus
@@ -38,7 +37,6 @@ require __DIR__ . '/header.php';
                     type="password"
                     id="senha"
                     name="senha"
-                    placeholder="********"
                     required
                 >
             </div>

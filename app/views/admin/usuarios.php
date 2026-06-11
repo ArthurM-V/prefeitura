@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Usuarios';
+$pageTitle = 'Usuários';
 require __DIR__ . '/../shared/header.php';
 require __DIR__ . '/navbar.php';
 ?>
@@ -7,12 +7,12 @@ require __DIR__ . '/navbar.php';
 <main class="admin-main">
     <div class="container">
         <div class="page-header">
-            <h2>Usuarios</h2>
-            <p>Gerencie cidadaos e administradores do sistema.</p>
+            <h2>Usuários</h2>
+            <p>Gerencie cidadãos e administradores do sistema.</p>
         </div>
 
         <section class="card" style="margin-bottom:1.25rem">
-            <div class="card-header-admin"><h3 id="form-title">Novo usuario</h3></div>
+            <div class="card-header-admin"><h3 id="form-title">Novo usuário</h3></div>
             <div class="card-body">
                 <form id="form-usuario" class="admin-form-grid">
                     <input type="hidden" name="id" id="usuario-id">
@@ -35,13 +35,13 @@ require __DIR__ . '/navbar.php';
                     <div class="form-group">
                         <label for="usuario-tipo">Tipo</label>
                         <select name="tipo" id="usuario-tipo" required>
-                            <option value="cidadao">Cidadao</option>
+                            <option value="cidadao">Cidadão</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="usuario-senha">Senha</label>
-                        <input type="password" name="senha" id="usuario-senha" placeholder="Obrigatoria para novo usuario">
+                        <input type="password" name="senha" id="usuario-senha" placeholder="Obrigatória para novo usuário">
                     </div>
                     <div class="form-actions form-group-wide">
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -61,7 +61,7 @@ require __DIR__ . '/navbar.php';
                         <th>Telefone</th>
                         <th>CPF</th>
                         <th>Tipo</th>
-                        <th>Acoes</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,7 +70,7 @@ require __DIR__ . '/navbar.php';
                             <td class="text-muted"><?= $usuario['id'] ?></td>
                             <td><?= htmlspecialchars($usuario['nome']) ?></td>
                             <td><?= htmlspecialchars($usuario['email'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($usuario['telefone'] ?? '') ?></td>
+                            <td><?= htmlspecialchars(formatarTelefone($usuario['telefone'] ?? '')) ?></td>
                             <td><?= htmlspecialchars($usuario['cpf'] ?? '') ?></td>
                             <td><span class="badge badge-neutral"><?= htmlspecialchars($usuario['tipo']) ?></span></td>
                             <td>
@@ -86,6 +86,39 @@ require __DIR__ . '/navbar.php';
                 </tbody>
             </table>
         </div>
+        <?php
+            $primeiroItem = (($paginaAtual - 1) * $porPagina) + 1;
+            $ultimoItem = min($paginaAtual * $porPagina, $totalItens);
+        ?>
+        <p class="table-count">
+            Exibindo <?= $primeiroItem ?>-<?= $ultimoItem ?> de <?= $totalItens ?> usuário(s).
+        </p>
+
+        <?php if ($totalPaginas > 1): ?>
+            <nav class="pagination" aria-label="Paginação de usuários">
+                <?php if ($paginaAtual > 1): ?>
+                    <a href="<?= BASE_URL ?>/admin/usuarios?page=<?= $paginaAtual - 1 ?>" class="pagination-link">Anterior</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Anterior</span>
+                <?php endif; ?>
+
+                <?php for ($page = 1; $page <= $totalPaginas; $page++): ?>
+                    <a
+                        href="<?= BASE_URL ?>/admin/usuarios?page=<?= $page ?>"
+                        class="pagination-link <?= $page === $paginaAtual ? 'active' : '' ?>"
+                        <?= $page === $paginaAtual ? 'aria-current="page"' : '' ?>
+                    >
+                        <?= $page ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($paginaAtual < $totalPaginas): ?>
+                    <a href="<?= BASE_URL ?>/admin/usuarios?page=<?= $paginaAtual + 1 ?>" class="pagination-link">Próxima</a>
+                <?php else: ?>
+                    <span class="pagination-link disabled">Próxima</span>
+                <?php endif; ?>
+            </nav>
+        <?php endif; ?>
     </div>
 </main>
 
@@ -93,7 +126,7 @@ require __DIR__ . '/navbar.php';
 const form = document.getElementById('form-usuario');
 
 function editar(usuario) {
-    document.getElementById('form-title').textContent = 'Editar usuario';
+    document.getElementById('form-title').textContent = 'Editar usuário';
     document.getElementById('usuario-id').value = usuario.id;
     document.getElementById('usuario-nome').value = usuario.nome || '';
     document.getElementById('usuario-email').value = usuario.email || '';
@@ -108,8 +141,8 @@ function editar(usuario) {
 function limparFormulario() {
     form.reset();
     document.getElementById('usuario-id').value = '';
-    document.getElementById('usuario-senha').placeholder = 'Obrigatoria para novo usuario';
-    document.getElementById('form-title').textContent = 'Novo usuario';
+    document.getElementById('usuario-senha').placeholder = 'Obrigatória para novo usuário';
+    document.getElementById('form-title').textContent = 'Novo usuário';
 }
 
 form.addEventListener('submit', async (event) => {
@@ -124,7 +157,7 @@ form.addEventListener('submit', async (event) => {
 });
 
 async function excluir(id) {
-    if (!confirm('Deseja excluir este usuario?')) return;
+    if (!confirm('Deseja excluir este usuário?')) return;
     const body = new URLSearchParams({ id });
     const resp = await fetch('<?= BASE_URL ?>/admin/usuarios/excluir', {
         method: 'POST',

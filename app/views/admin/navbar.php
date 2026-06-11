@@ -17,7 +17,7 @@
             </a>
             <a href="<?= BASE_URL ?>/admin/usuarios"
                class="admin-nav-link <?= str_contains($_SERVER['REQUEST_URI'], 'usuarios') ? 'active' : '' ?>">
-                Usuarios
+                Usuários
             </a>
             <a href="<?= BASE_URL ?>/admin/categorias"
                class="admin-nav-link <?= str_contains($_SERVER['REQUEST_URI'], 'categorias') ? 'active' : '' ?>">
@@ -25,7 +25,7 @@
             </a>
             <a href="<?= BASE_URL ?>/admin/orgaos"
                class="admin-nav-link <?= str_contains($_SERVER['REQUEST_URI'], 'orgaos') ? 'active' : '' ?>">
-                Orgaos
+                Órgãos
             </a>
             <a href="<?= BASE_URL ?>/admin/empresas"
                class="admin-nav-link <?= str_contains($_SERVER['REQUEST_URI'], 'empresas') ? 'active' : '' ?>">
@@ -34,6 +34,7 @@
         </nav>
 
         <div class="admin-navbar-user">
+            <a href="<?= BASE_URL ?>/" class="btn btn-outline btn-sm on-dark">Portal</a>
             <span class="admin-user-name"><?= htmlspecialchars($_SESSION['nome'] ?? 'Admin') ?></span>
             <a href="<?= BASE_URL ?>/logout" class="btn btn-outline btn-sm on-dark">Sair</a>
         </div>

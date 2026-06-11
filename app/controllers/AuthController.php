@@ -81,7 +81,7 @@ class AuthController {
             $confirma = $_POST['confirma_senha'] ?? '';
 
             $erros = [];
-            if (!$telefone)           $erros[] = 'Telefone e obrigatorio.';
+            if (!$telefone)           $erros[] = 'Telefone é obrigatório.';
             if (!$nome)               $erros[] = 'Nome é obrigatório.';
             if (!$email)              $erros[] = 'E-mail é obrigatório.';
             if (!$cpf)                $erros[] = 'CPF é obrigatório.';

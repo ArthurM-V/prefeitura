@@ -7,7 +7,7 @@ require __DIR__ . '/../shared/header.php';
     <div class="login-card">
         <div class="login-brand">
             <span class="login-brand-icon">ID</span>
-            <h1>Area do Cidadao</h1>
+            <h1>Área do Cidadão</h1>
             <p>Entre com seu e-mail ou CPF</p>
         </div>
 

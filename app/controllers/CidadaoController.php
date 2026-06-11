@@ -17,7 +17,14 @@ class CidadaoController {
         $this->requireCidadao();
 
         $chamadoModel = new Chamado();
-        $chamados = $chamadoModel->listarPorUsuario($_SESSION['usuario_id']);
+        $usuarioId = (int)$_SESSION['usuario_id'];
+        $porPagina = 10;
+        $paginaAtual = max(1, (int)($_GET['page'] ?? 1));
+        $totalChamados = $chamadoModel->contarPorUsuario($usuarioId);
+        $totalPaginas = max(1, (int)ceil($totalChamados / $porPagina));
+        $paginaAtual = min($paginaAtual, $totalPaginas);
+        $offset = ($paginaAtual - 1) * $porPagina;
+        $chamados = $chamadoModel->listarPorUsuario($usuarioId, $porPagina, $offset);
 
         require __DIR__ . '/../views/cidadao/dashboard.php';
     }

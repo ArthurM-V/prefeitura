@@ -9,8 +9,19 @@ class Orgao {
         $this->db = Database::getConnection();
     }
 
-    public function listarTodos(): array {
-        return $this->db->query("SELECT * FROM orgaos ORDER BY nome")->fetchAll();
+    public function listarTodos(?int $limit = null, int $offset = 0): array {
+        $sql = "SELECT * FROM orgaos ORDER BY nome";
+        if ($limit !== null) {
+            $limit = max(1, $limit);
+            $offset = max(0, $offset);
+            $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        }
+
+        return $this->db->query($sql)->fetchAll();
+    }
+
+    public function contarTodos(): int {
+        return (int) $this->db->query("SELECT COUNT(*) FROM orgaos")->fetchColumn();
     }
 
     public function buscarPorId(int $id): ?array {

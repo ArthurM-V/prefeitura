@@ -2,6 +2,7 @@
 
 $pageTitle = 'Portal do Cidadão';
 require __DIR__ . '/../shared/header.php';
+$adminLogado = isLoggedIn() && isAdmin();
 $logado = isLoggedIn() && !isAdmin();
 ?>
 
@@ -12,7 +13,11 @@ $logado = isLoggedIn() && !isAdmin();
             <span>Prefeitura Municipal</span>
         </a>
         <div class="navbar-actions">
-            <?php if ($logado): ?>
+            <?php if ($adminLogado): ?>
+                <span class="navbar-user">Admin: <?= htmlspecialchars($_SESSION['nome'] ?? 'Administrador') ?></span>
+                <a href="<?= BASE_URL ?>/admin/dashboard" class="btn btn-outline btn-sm on-dark">Painel admin</a>
+                <a href="<?= BASE_URL ?>/logout" class="btn btn-outline btn-sm on-dark">Sair</a>
+            <?php elseif ($logado): ?>
                 <a href="<?= BASE_URL ?>/cidadao/dashboard" class="btn btn-outline btn-sm on-dark">Minha área</a>
                 <a href="<?= BASE_URL ?>/logout" class="btn btn-outline btn-sm on-dark">Sair</a>
             <?php else: ?>
@@ -29,8 +34,14 @@ $logado = isLoggedIn() && !isAdmin();
         <p class="hero-eyebrow">Prefeitura Municipal</p>
         <h2 class="hero-title">Portal do Cidadão</h2>
         <p class="hero-subtitle">Registre sua solicitação e acompanhe as melhorias realizadas em nossa cidade.</p>
+        <?php if ($adminLogado): ?>
+            <p class="hero-admin-context">Visualização pública do portal. Você está autenticado como administrador.</p>
+        <?php endif; ?>
         <div class="hero-actions">
-        <?php if ($logado): ?>
+        <?php if ($adminLogado): ?>
+            <a href="<?= BASE_URL ?>/admin/dashboard" class="btn btn-primary btn-lg">Voltar ao painel admin</a>
+            <a href="<?= BASE_URL ?>/admin/chamados" class="btn btn-outline btn-lg on-dark">Gerenciar chamados</a>
+        <?php elseif ($logado): ?>
             <a href="#novo-chamado" class="btn btn-primary btn-lg">Fazer uma solicitação</a>
         <?php else: ?>
             <a href="<?= BASE_URL ?>/entrar" class="btn btn-primary btn-lg">Entrar para abrir chamado</a>
@@ -158,6 +169,20 @@ $logado = isLoggedIn() && !isAdmin();
                     <span x-show="enviando">Enviando...</span>
                 </button>
             </form>
+        </div>
+    </div>
+</section>
+<?php elseif ($adminLogado): ?>
+<!-- Contexto para administradores -->
+<section class="section section-alt">
+    <div class="container container-narrow">
+        <div class="admin-context-note">
+            <h2 class="section-title">Visualização administrativa</h2>
+            <p class="section-sub">Administradores não abrem solicitações por esta área. Use o painel para acompanhar, atribuir e responder chamados.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+                <a href="<?= BASE_URL ?>/admin/dashboard" class="btn btn-primary btn-lg">Ir para o painel</a>
+                <a href="<?= BASE_URL ?>/admin/chamados" class="btn btn-outline btn-lg">Gerenciar chamados</a>
+            </div>
         </div>
     </div>
 </section>

@@ -9,14 +9,28 @@ class Empresa {
         $this->db = Database::getConnection();
     }
 
-    public function listarTodas(bool $somenteAtivas = false): array {
+    public function listarTodas(bool $somenteAtivas = false, ?int $limit = null, int $offset = 0): array {
         $sql = "SELECT * FROM empresas";
         if ($somenteAtivas) {
             $sql .= " WHERE ativo = 1";
         }
         $sql .= " ORDER BY nome";
+        if ($limit !== null) {
+            $limit = max(1, $limit);
+            $offset = max(0, $offset);
+            $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        }
 
         return $this->db->query($sql)->fetchAll();
+    }
+
+    public function contarTodas(bool $somenteAtivas = false): int {
+        $sql = "SELECT COUNT(*) FROM empresas";
+        if ($somenteAtivas) {
+            $sql .= " WHERE ativo = 1";
+        }
+
+        return (int) $this->db->query($sql)->fetchColumn();
     }
 
     public function buscarPorId(int $id): ?array {

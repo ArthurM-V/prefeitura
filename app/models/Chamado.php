@@ -34,18 +34,8 @@ class Chamado {
         return $stmt->fetch() ?: null;
     }
 
-    public function listarTodos(array $filtros = []): array {
-        $sql = "
-            SELECT c.*, u.nome as usuario_nome, cat.nome as categoria_nome,
-                   s.nome as status_nome, o.nome as orgao_nome, e.nome as empresa_nome
-            FROM chamados c
-            JOIN usuarios u ON c.usuario_id = u.id
-            JOIN categorias cat ON c.categoria_id = cat.id
-            JOIN status s ON c.status_id = s.id
-            LEFT JOIN orgaos o ON c.orgao_id = o.id
-            LEFT JOIN empresas e ON c.empresa_id = e.id
-            WHERE 1=1
-        ";
+    private function montarFiltrosSql(array $filtros = []): array {
+        $sql = " WHERE 1=1";
         $params = [];
 
         if (!empty($filtros['status_id'])) {
@@ -65,14 +55,50 @@ class Chamado {
             $params[] = $filtros['empresa_id'];
         }
 
+        return [$sql, $params];
+    }
+
+    public function listarTodos(array $filtros = [], ?int $limit = null, int $offset = 0): array {
+        [$where, $params] = $this->montarFiltrosSql($filtros);
+
+        $sql = "
+            SELECT c.*, u.nome as usuario_nome, cat.nome as categoria_nome,
+                   s.nome as status_nome, o.nome as orgao_nome, e.nome as empresa_nome
+            FROM chamados c
+            JOIN usuarios u ON c.usuario_id = u.id
+            JOIN categorias cat ON c.categoria_id = cat.id
+            JOIN status s ON c.status_id = s.id
+            LEFT JOIN orgaos o ON c.orgao_id = o.id
+            LEFT JOIN empresas e ON c.empresa_id = e.id
+            $where
+        ";
+
         $sql .= " ORDER BY c.data_abertura DESC";
+        if ($limit !== null) {
+            $limit = max(1, $limit);
+            $offset = max(0, $offset);
+            $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        }
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
-    public function listarPorUsuario(int $usuarioId): array {
+    public function contarTodos(array $filtros = []): int {
+        [$where, $params] = $this->montarFiltrosSql($filtros);
+
         $stmt = $this->db->prepare("
+            SELECT COUNT(*)
+            FROM chamados c
+            $where
+        ");
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function listarPorUsuario(int $usuarioId, ?int $limit = null, int $offset = 0): array {
+        $sql = "
             SELECT c.*, cat.nome as categoria_nome, s.nome as status_nome,
                    o.nome as orgao_nome, e.nome as empresa_nome
             FROM chamados c
@@ -82,9 +108,22 @@ class Chamado {
             LEFT JOIN empresas e ON c.empresa_id = e.id
             WHERE c.usuario_id = ?
             ORDER BY c.data_abertura DESC
-        ");
+        ";
+        if ($limit !== null) {
+            $limit = max(1, $limit);
+            $offset = max(0, $offset);
+            $sql .= " LIMIT {$limit} OFFSET {$offset}";
+        }
+
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([$usuarioId]);
         return $stmt->fetchAll();
+    }
+
+    public function contarPorUsuario(int $usuarioId): int {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM chamados WHERE usuario_id = ?");
+        $stmt->execute([$usuarioId]);
+        return (int) $stmt->fetchColumn();
     }
 
     public function listarResolvidos(): array {

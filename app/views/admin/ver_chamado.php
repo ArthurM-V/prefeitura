@@ -182,7 +182,7 @@ foreach ($imagens as $img) {
                             <input type="text" x-model="titulo">
                         </div>
                         <div class="form-group">
-                            <label style="font-size:.8rem;font-weight:500">Descricao</label>
+                            <label style="font-size:.8rem;font-weight:500">Descrição</label>
                             <textarea rows="4" x-model="descricao"></textarea>
                         </div>
                         <div class="form-group">
@@ -200,7 +200,7 @@ foreach ($imagens as $img) {
                             </select>
                         </div>
                         <button class="btn btn-primary btn-block" @click="salvar()" :disabled="carregando">
-                            <span x-show="!carregando">Salvar edicao</span>
+                            <span x-show="!carregando">Salvar edição</span>
                             <span x-show="carregando">Salvando...</span>
                         </button>
                     </div>
@@ -388,7 +388,7 @@ function edicaoChamado(chamadoId) {
 
         async salvar() {
             if (!this.titulo.trim() || !this.descricao.trim() || !this.categoriaId) {
-                this.msg = 'Preencha titulo, descricao e categoria.';
+                this.msg = 'Preencha título, descrição e categoria.';
                 this.msgTipo = 'erro';
                 return;
             }
@@ -416,7 +416,7 @@ function edicaoChamado(chamadoId) {
                 this.msgTipo = data.success ? 'sucesso' : 'erro';
                 if (data.success) setTimeout(() => location.reload(), 1200);
             } catch {
-                this.msg = 'Erro de conexao.';
+                this.msg = 'Erro de conexão.';
                 this.msgTipo = 'erro';
             } finally {
                 this.carregando = false;
