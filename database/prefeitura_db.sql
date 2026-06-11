@@ -11,6 +11,9 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+CREATE DATABASE IF NOT EXISTS prefeitura_db;
+USE prefeitura_db;
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -72,14 +75,14 @@ CREATE TABLE `chamados` (
 --
 
 INSERT INTO `chamados` (`id`, `titulo`, `descricao`, `localizacao`, `data_abertura`, `data_fechamento`, `usuario_id`, `categoria_id`, `status_id`, `orgao_id`, `empresa_id`) VALUES
-(1, 'Buraco na Rua das Flores', 'Há um buraco grande no meio da rua, prejudicando o trânsito e colocando veículos em risco.', 'Rua das Flores, nº 250, Centro', '2026-04-29 16:07:18', '2024-11-20 14:00:00', 2, 2, 4, 1, NULL),
-(2, 'Poste apagado na Av. Brasil', 'O poste da esquina com a Rua Minas Gerais está apagado há mais de uma semana, deixando a região sem iluminação.', 'Av. Brasil, esquina com Rua Minas Gerais', '2026-04-29 16:07:18', '2024-11-22 10:00:00', 2, 1, 4, 1, NULL),
-(3, 'Lixo acumulado no Parque Central', 'Há muito lixo acumulado próximo às lixeiras do parque central, causando mau cheiro e atraindo animais.', 'Parque Municipal Central', '2026-04-29 16:07:18', '2024-11-25 16:00:00', 2, 3, 4, 7, NULL),
-(7, 'teste teste', 'teste teste teste', 'teste teste teste teste', '2026-05-02 17:02:35', '2026-05-02 17:04:41', 4, 6, 4, 4, NULL),
-(8, 'Minecraft', 'zelda vai pro passado', 'link to the past', '2026-05-03 12:32:12', '2026-05-03 12:45:28', 5, 1, 4, 7, NULL),
-(10, 'sadfasd', 'sdfasdfasd', 'asdfasdf', '2026-05-07 13:34:42', NULL, 6, 7, 1, NULL, NULL),
-(12, 'Queria que plantassem uma horta comunitária aqui', 'Planta umas plantinhas aqui pra nós prefeito', 'Rua das Flores, 123 - Centro', '2026-05-09 15:46:11', '2026-05-21 11:53:43', 6, 4, 4, 2, 2),
-(13, 'Quero que transformem a rua em mão única', 'Com a mão dupla, os carros estão obstruindo a passagem dos moradores e gerando problemas', 'Ruas c - Funcionarios', '2026-05-21 11:42:41', NULL, 6, 5, 1, NULL, NULL);
+(1, 'Buraco na Rua das Flores', 'Há um buraco grande próximo ao cruzamento, prejudicando o trânsito e oferecendo risco para veículos e pedestres.', 'Rua das Flores, nº 250 - Centro', '2026-05-20 09:15:00', '2026-05-22 16:30:00', 2, 2, 4, 1, 2),
+(2, 'Poste apagado na Avenida Brasil', 'O poste da esquina está apagado há vários dias, deixando a via escura durante a noite.', 'Avenida Brasil, esquina com Rua Minas Gerais - Jardim América', '2026-05-21 18:40:00', '2026-05-23 10:20:00', 3, 1, 4, 1, 1),
+(3, 'Lixo acumulado no Parque Central', 'As lixeiras do parque estão cheias e há descarte irregular de sacos de lixo próximo à área de caminhada.', 'Parque Municipal Central', '2026-05-24 08:10:00', '2026-05-25 15:45:00', 4, 3, 4, 7, 3),
+(8, 'Bueiro entupido após chuva', 'Após a última chuva, o bueiro da rua ficou entupido e a água está acumulando na calçada.', 'Rua das Acácias, nº 118 - Vila Nova', '2026-05-27 14:05:00', NULL, 5, 5, 3, 3, NULL),
+(10, 'Solicitação de poda de árvore', 'Uma árvore grande está com galhos encostando na fiação e dificultando a passagem de pedestres.', 'Rua Ipê Amarelo, nº 72 - Jardim das Flores', '2026-05-28 11:25:00', NULL, 6, 4, 2, 2, NULL),
+(11, 'Faixa de pedestre apagada', 'A faixa de pedestre em frente à escola está quase invisível, dificultando a travessia dos alunos.', 'Avenida Educação, nº 430 - Centro', '2026-05-29 07:50:00', NULL, 7, 8, 1, NULL, NULL),
+(12, 'Horta comunitária no bairro', 'Moradores solicitam avaliação para implantação de uma horta comunitária em terreno público sem uso.', 'Rua das Flores, nº 123 - Centro', '2026-05-30 13:30:00', '2026-06-01 09:40:00', 6, 4, 4, 2, 2),
+(13, 'Pedido de mão única na Rua C', 'A via está com fluxo intenso nos dois sentidos e veículos estacionados dificultam a passagem dos moradores.', 'Rua C - Bairro Funcionários', '2026-06-01 16:10:00', NULL, 3, 8, 2, 6, NULL);
 
 -- --------------------------------------------------------
 
@@ -104,9 +107,10 @@ CREATE TABLE `empresas` (
 --
 
 INSERT INTO `empresas` (`id`, `nome`, `cnpj`, `email`, `telefone`, `responsavel`, `area_atuacao`, `ativo`, `criado_em`) VALUES
-(1, 'Luz Urbana Manutencao Ltda', '12.345.678/0001-90', 'contato@luzurbana.com', '(11) 4000-1000', 'Carlos Mendes', 'Iluminacao Publica', 1, '2026-05-21 10:28:08'),
-(2, 'Via Forte Pavimentacao', '23.456.789/0001-01', 'atendimento@viaforte.com', '(11) 4000-2000', 'Marina Costa', 'Pavimentacao', 1, '2026-05-21 10:28:08'),
-(3, 'EcoLimpa Servicos Urbanos', '34.567.890/0001-12', 'contato@ecolimpa.com', '(11) 4000-3000', 'Rafael Almeida', 'Coleta de Lixo e Limpeza Urbana', 1, '2026-05-21 10:28:08');
+(1, 'Luz Urbana Manutenção Ltda', '12.345.678/0001-90', 'contato@luzurbana.com.br', '(11) 4000-1000', 'Carlos Mendes', 'Iluminação Pública', 1, '2026-05-15 10:00:00'),
+(2, 'Via Forte Pavimentação', '23.456.789/0001-01', 'atendimento@viaforte.com.br', '(11) 4000-2000', 'Marina Costa', 'Pavimentação e Obras Urbanas', 1, '2026-05-15 10:15:00'),
+(3, 'EcoLimpa Serviços Urbanos', '34.567.890/0001-12', 'contato@ecolimpa.com.br', '(11) 4000-3000', 'Rafael Almeida', 'Coleta de Lixo e Limpeza Urbana', 1, '2026-05-15 10:30:00'),
+(4, 'Verdejar Meio Ambiente', '45.678.901/0001-23', 'operacoes@verdejar.com.br', '(11) 4000-4000', 'Patrícia Ramos', 'Poda, Jardinagem e Áreas Verdes', 1, '2026-05-15 10:45:00');
 
 -- --------------------------------------------------------
 
@@ -127,12 +131,10 @@ CREATE TABLE `feedbacks` (
 --
 
 INSERT INTO `feedbacks` (`id`, `mensagem`, `data`, `usuario_id`, `chamado_id`) VALUES
-(1, 'Prezado cidadão, informamos que o buraco na Rua das Flores foi reparado com asfalto novo. A via está liberada e em boas condições. Agradecemos seu contato!', '2024-11-20 15:00:00', 1, 1),
-(2, 'O poste foi substituído e a iluminação foi restabelecida. Agradecemos a denúncia e continuamos à disposição!', '2024-11-22 11:00:00', 1, 2),
-(3, 'O parque foi limpo e novas lixeiras foram instaladas. Contamos com a colaboração de todos para manter o espaço limpo!', '2024-11-25 17:00:00', 1, 3),
-(5, 'Tudo resolvido paizão', '2026-05-02 17:04:41', 1, 7),
-(6, 'Tudo resolvido paizão', '2026-05-03 12:45:28', 1, 8),
-(7, 'feedback de teste', '2026-05-21 11:53:43', 1, 12);
+(1, 'O reparo do asfalto foi concluído e a via está liberada para circulação. Agradecemos o contato.', '2026-05-22 16:30:00', 1, 1),
+(2, 'A equipe de iluminação realizou a manutenção e o poste voltou a funcionar normalmente.', '2026-05-23 10:20:00', 1, 2),
+(3, 'A limpeza do parque foi realizada e o ponto foi incluído no roteiro de fiscalização preventiva.', '2026-05-25 15:45:00', 1, 3),
+(4, 'A solicitação foi analisada pela Secretaria de Meio Ambiente e aprovada para estudo técnico do espaço.', '2026-06-01 09:40:00', 1, 12);
 
 -- --------------------------------------------------------
 
@@ -154,32 +156,32 @@ CREATE TABLE `historico` (
 --
 
 INSERT INTO `historico` (`id`, `data`, `tipo_acao`, `descricao`, `usuario_id`, `chamado_id`) VALUES
-(1, '2024-11-18 09:00:00', 'Abertura', 'Chamado aberto pelo cidadão.', 2, 1),
-(2, '2024-11-18 14:00:00', 'Atribuição', 'Chamado atribuído à Secretaria de Obras.', 1, 1),
-(3, '2024-11-20 14:00:00', 'Resolução', 'Chamado marcado como resolvido.', 1, 1),
-(4, '2024-11-19 10:00:00', 'Abertura', 'Chamado aberto pelo cidadão.', 2, 2),
-(5, '2024-11-19 15:00:00', 'Atribuição', 'Chamado atribuído à Secretaria de Obras.', 1, 2),
-(6, '2024-11-22 10:00:00', 'Resolução', 'Chamado marcado como resolvido.', 1, 2),
-(7, '2024-11-20 08:00:00', 'Abertura', 'Chamado aberto pelo cidadão.', 2, 3),
-(8, '2024-11-20 11:00:00', 'Atribuição', 'Chamado atribuído à Secretaria de Serviços Urbanos.', 1, 3),
-(9, '2024-11-25 16:00:00', 'Resolução', 'Chamado marcado como resolvido.', 1, 3),
-(16, '2026-05-02 17:02:35', 'Abertura', 'Chamado aberto pelo cidadão via portal.', 4, 7),
-(17, '2026-05-02 17:03:14', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Saúde.', 1, 7),
-(18, '2026-05-02 17:04:02', 'Status', 'Status alterado para: Aberto.', 1, 7),
-(19, '2026-05-02 17:04:26', 'Status', 'Status alterado para: Em Andamento.', 1, 7),
-(20, '2026-05-02 17:04:41', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 7),
-(21, '2026-05-03 12:32:12', 'Abertura', 'Chamado aberto pelo cidadão.', 5, 8),
-(22, '2026-05-03 12:45:13', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Serviços Urbanos.', 1, 8),
-(23, '2026-05-03 12:45:28', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 8),
-(27, '2026-05-07 13:34:42', 'Abertura', 'Chamado aberto pelo cidadão.', 6, 10),
-(29, '2026-05-09 15:46:11', 'Abertura', 'Chamado aberto pelo cidadão.', 6, 12),
-(30, '2026-05-09 15:47:18', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Meio Ambiente.', 1, 12),
-(31, '2026-05-21 11:42:41', 'Abertura', 'Chamado aberto pelo cidadão.', 6, 13),
-(32, '2026-05-21 11:52:57', 'Status', 'Status alterado para: Em Andamento.', 1, 12),
-(33, '2026-05-21 11:53:13', 'Edicao', 'Dados do chamado atualizados pelo administrador.', 1, 12),
-(34, '2026-05-21 11:53:19', 'Edicao', 'Dados do chamado atualizados pelo administrador.', 1, 12),
-(35, '2026-05-21 11:53:31', 'Empresa', 'Chamado atribuido a empresa parceira: Via Forte Pavimentacao.', 1, 12),
-(36, '2026-05-21 11:53:43', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 12);
+(1, '2026-05-20 09:15:00', 'Abertura', 'Chamado aberto pelo cidadão.', 2, 1),
+(2, '2026-05-20 11:30:00', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Obras.', 1, 1),
+(3, '2026-05-20 11:35:00', 'Empresa', 'Chamado atribuído à empresa parceira: Via Forte Pavimentação.', 1, 1),
+(4, '2026-05-22 16:30:00', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 1),
+(5, '2026-05-21 18:40:00', 'Abertura', 'Chamado aberto pelo cidadão.', 3, 2),
+(6, '2026-05-22 08:15:00', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Obras.', 1, 2),
+(7, '2026-05-22 08:20:00', 'Empresa', 'Chamado atribuído à empresa parceira: Luz Urbana Manutenção Ltda.', 1, 2),
+(8, '2026-05-23 10:20:00', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 2),
+(9, '2026-05-24 08:10:00', 'Abertura', 'Chamado aberto pelo cidadão.', 4, 3),
+(10, '2026-05-24 10:00:00', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Serviços Urbanos.', 1, 3),
+(11, '2026-05-24 10:05:00', 'Empresa', 'Chamado atribuído à empresa parceira: EcoLimpa Serviços Urbanos.', 1, 3),
+(12, '2026-05-25 15:45:00', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 3),
+(13, '2026-05-27 14:05:00', 'Abertura', 'Chamado aberto pelo cidadão.', 5, 8),
+(14, '2026-05-27 16:20:00', 'Atribuição', 'Chamado atribuído ao órgão: SAAE.', 1, 8),
+(15, '2026-05-28 09:10:00', 'Status', 'Status alterado para: Em Andamento.', 1, 8),
+(16, '2026-05-28 11:25:00', 'Abertura', 'Chamado aberto pelo cidadão.', 6, 10),
+(17, '2026-05-28 14:35:00', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Meio Ambiente.', 1, 10),
+(18, '2026-05-28 14:40:00', 'Status', 'Status alterado para: Em Análise.', 1, 10),
+(19, '2026-05-29 07:50:00', 'Abertura', 'Chamado aberto pelo cidadão.', 7, 11),
+(20, '2026-05-30 13:30:00', 'Abertura', 'Chamado aberto pelo cidadão.', 6, 12),
+(21, '2026-05-30 15:10:00', 'Atribuição', 'Chamado atribuído ao órgão: Secretaria de Meio Ambiente.', 1, 12),
+(22, '2026-05-31 09:15:00', 'Empresa', 'Chamado atribuído à empresa parceira: Via Forte Pavimentação.', 1, 12),
+(23, '2026-06-01 09:40:00', 'Resolução', 'Feedback enviado ao cidadão e chamado marcado como resolvido.', 1, 12),
+(24, '2026-06-01 16:10:00', 'Abertura', 'Chamado aberto pelo cidadão.', 3, 13),
+(25, '2026-06-01 17:25:00', 'Atribuição', 'Chamado atribuído ao órgão: DETRAN Municipal.', 1, 13),
+(26, '2026-06-01 17:30:00', 'Status', 'Status alterado para: Em Análise.', 1, 13);
 
 -- --------------------------------------------------------
 
@@ -201,9 +203,9 @@ CREATE TABLE `imagens` (
 --
 
 INSERT INTO `imagens` (`id`, `chamado_id`, `tipo`, `caminho`, `nome_original`, `criado_em`) VALUES
-(1, 8, 'cidadao', 'img_8_cidadao_69f76a7c73899.png', 'MERfinal.png', '2026-05-03 12:32:12'),
-(3, 10, 'cidadao', 'img_10_cidadao_69fcbf2286577.png', 'MERfinal.png', '2026-05-07 13:34:42'),
-(5, 12, 'cidadao', 'img_12_cidadao_69ff80f33f824.jpg', 'workalovepfp.jpg', '2026-05-09 15:46:11');
+(1, 8, 'cidadao', 'img_8_cidadao_69f76a7c73899.png', 'foto_bueiro_entupido.png', '2026-05-27 14:05:00'),
+(2, 10, 'cidadao', 'img_10_cidadao_69fcbf2286577.png', 'foto_arvore_fiacao.png', '2026-05-28 11:25:00'),
+(3, 12, 'cidadao', 'img_12_cidadao_69ff80f33f824.jpg', 'terreno_horta_comunitaria.jpg', '2026-05-30 13:30:00');
 
 -- --------------------------------------------------------
 
@@ -275,13 +277,13 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `telefone`, `cpf`, `senha`, `tipo`, `criado_em`) VALUES
-(1, 'Administrador', 'admin@prefeitura.gov.br', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', '2026-04-29 16:07:18'),
-(2, 'João Silva', 'joao@email.com', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-04-29 16:07:18'),
-(3, 'mais teste', 'teste@teste.com', NULL, NULL, '$2y$10$DXDxkSm2bALF2gyVouSrvOAeHb6pUOv4O2qTC2Bfh4sTeFLDUIIxa', 'cidadao', '2026-05-02 16:52:59'),
-(4, 'teste 2', 'teste3@email.com', NULL, NULL, '$2y$10$Tzer1LiTGxAWwXECe1a.ueAnAluM689S.rYCjDbAU0oTXITIN6.r6', 'cidadao', '2026-05-02 17:02:35'),
-(5, 'teste da silva', 'testesilva@email.com', NULL, '12345678900', '$2y$10$4I2vBgIbaLp97o9ysguvVOUptjkjRrfjAvo729b5OdMbvRi24pcr2', 'cidadao', '2026-05-03 12:31:26'),
-(6, 'mais teste', 'maisteste@teste.com', NULL, '98765432100', '$2y$10$2VczI1OiamM.DjFZR0VZAO/.vhUDoo2e5Rh4cni0LJeJmMOeswO9O', 'cidadao', '2026-05-07 13:29:27'),
-(7, 'flies past', 'emailteste@email.com', '1212345678', '01234567899', '$2y$10$.yZ2wFL3dA8TiK28SpR7s.g/p4iYQQt863lxjdm7MSdBj8sK08rQq', 'cidadao', '2026-05-21 11:39:57');
+(1, 'Administrador', 'admin@prefeitura.gov.br', '(11) 4000-0000', NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', '2026-05-15 08:00:00'),
+(2, 'João Silva', 'joao@email.com', '(11) 98888-1001', '123.456.789-00', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-05-15 09:00:00'),
+(3, 'Maria Oliveira', 'maria@email.com', '(11) 98888-1002', '234.567.890-11', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-05-15 09:20:00'),
+(4, 'Pedro Santos', 'pedro@email.com', '(11) 98888-1003', '345.678.901-22', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-05-15 09:40:00'),
+(5, 'Ana Costa', 'ana@email.com', '(11) 98888-1004', '456.789.012-33', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-05-15 10:00:00'),
+(6, 'Lucas Pereira', 'lucas@email.com', '(11) 98888-1005', '567.890.123-44', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-05-15 10:20:00'),
+(7, 'Camila Rocha', 'camila@email.com', '(11) 98888-1006', '678.901.234-55', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cidadao', '2026-05-15 10:40:00');
 
 --
 -- Índices para tabelas despejadas
@@ -362,7 +364,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de tabela `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `chamados`
@@ -380,25 +382,25 @@ ALTER TABLE `empresas`
 -- AUTO_INCREMENT de tabela `feedbacks`
 --
 ALTER TABLE `feedbacks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `historico`
 --
 ALTER TABLE `historico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `imagens`
 --
 ALTER TABLE `imagens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `orgaos`
 --
 ALTER TABLE `orgaos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `status`
@@ -410,7 +412,7 @@ ALTER TABLE `status`
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restrições para tabelas despejadas

@@ -1,9 +1,3 @@
-/* ============================================================
-   style.css — Prefeitura Municipal
-   Portal público + Área do cidadão + Painel admin
-   Filosofia: governo — funcional, sério, acessível
-   ============================================================ */
-
 /* ---- RESET & BASE ---- */
 *,
 *::before,
@@ -26,7 +20,6 @@ body {
   background: #f5f6f8;
   color: #1c2b3a;
   line-height: 1.65;
-  /* Sticky footer — empurra o footer para o fundo em qualquer altura de conteúdo */
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -46,7 +39,7 @@ img {
 
 /* ---- VARIÁVEIS ---- */
 :root {
-  /* Paleta principal — azul institucional suave */
+  /* Paleta principal */
   --primary: #25b489;
   --primary-dark: #197a5d;
   --primary-light: #e8f0fb;
@@ -88,7 +81,7 @@ img {
   --radius-lg: 10px;
   --radius-xl: 14px;
 
-  /* Sombras leves — gov não usa sombras pesadas */
+  /* Sombras */
   --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.09);
@@ -225,7 +218,6 @@ img {
   font-size: 0.75rem;
 }
 
-/* Botões sobre fundo escuro (navbar) */
 .on-dark.btn-outline {
   color: rgba(255, 255, 255, 0.9);
   border-color: rgba(255, 255, 255, 0.4);
@@ -388,7 +380,7 @@ textarea {
 }
 
 /* ================================================================
-   FAIXA DE IDENTIDADE — linha verde no topo (padrão gov.br)
+   FAIXA DE IDENTIDADE 
    ================================================================ */
 .gov-stripe {
   height: 4px;
@@ -396,7 +388,7 @@ textarea {
 }
 
 /* ================================================================
-   NAVBAR — portal e cidadão
+   NAVBAR
    ================================================================ */
 .navbar {
   background: var(--primary-dark);
@@ -438,7 +430,7 @@ textarea {
 }
 
 /* ================================================================
-   HERO — portal
+   HERO 
    ================================================================ */
 .hero {
   background: var(--primary-dark);
@@ -511,10 +503,8 @@ textarea {
   background: var(--bg-white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
   transition:
     border-color var(--transition),
     box-shadow var(--transition);
@@ -522,6 +512,49 @@ textarea {
 .card-solucao:hover {
   border-color: var(--primary-border);
   box-shadow: var(--shadow);
+}
+.card-media {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-bottom: 1px solid var(--border);
+  background: #e8edf2;
+  overflow: hidden;
+}
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.card-media-cat-1 {
+  background: #f7edc8;
+}
+.card-media-cat-2 {
+  background: #dfe3e8;
+}
+.card-media-cat-3 {
+  background: #d9ecdf;
+}
+.card-media-cat-4 {
+  background: #dcebd1;
+}
+.card-media-cat-5 {
+  background: #d7e9ee;
+}
+.card-media-cat-6 {
+  background: #f0dada;
+}
+.card-media-cat-7 {
+  background: #dce5f2;
+}
+.card-media-cat-8 {
+  background: #eee0ca;
+}
+.card-solucao-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem;
 }
 .card-solucao .card-header {
   display: flex;

@@ -51,7 +51,18 @@ $logado = isLoggedIn() && !isAdmin();
         <?php else: ?>
             <div class="cards-grid">
                 <?php foreach ($resolvidos as $chamado): ?>
+                    <?php $categoriaClasse = 'card-media-cat-' . (int)($chamado['categoria_id'] ?? 0); ?>
                     <article class="card card-solucao">
+                        <div class="card-media <?= $categoriaClasse ?>">
+                            <?php if (!empty($chamado['imagem_admin'])): ?>
+                                <img
+                                    src="<?= BASE_URL ?>/imgs/uploads/<?= htmlspecialchars($chamado['imagem_admin']) ?>"
+                                    alt="Foto da solucao"
+                                >
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="card-solucao-body">
                         <div class="card-header">
                             <span class="badge badge-success">Resolvido</span>
                             <span class="card-categoria"><?= htmlspecialchars($chamado['categoria_nome']) ?></span>
@@ -67,14 +78,6 @@ $logado = isLoggedIn() && !isAdmin();
                             <p class="card-meta">Empresa parceira: <?= htmlspecialchars($chamado['empresa_nome']) ?></p>
                         <?php endif; ?>
 
-                        <?php if (!empty($chamado['imagem_admin'])): ?>
-                            <img
-                                src="<?= BASE_URL ?>/imgs/uploads/<?= htmlspecialchars($chamado['imagem_admin']) ?>"
-                                alt="Foto da solução"
-                                class="card-img"
-                            >
-                        <?php endif; ?>
-
                         <?php if (!empty($chamado['feedback_mensagem'])): ?>
                             <div class="card-feedback">
                                 <strong>Resposta da prefeitura:</strong>
@@ -85,6 +88,7 @@ $logado = isLoggedIn() && !isAdmin();
                         <p class="card-date">
                             Resolvido em <?= $chamado['data_fechamento'] ? date('d/m/Y', strtotime($chamado['data_fechamento'])) : '—' ?>
                         </p>
+                        </div>
                     </article>
                 <?php endforeach; ?>
             </div>
