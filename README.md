@@ -431,9 +431,3 @@ http://localhost/prefeitura/
 | E-mail | `joao@email.com` |
 | CPF    | `123.456.789-00` |
 | Senha  | `password`       |
-
-## Link do repositório
-
-Repositório público no GitHub:
-
-https://github.com/ArthurM-V/prefeitura
