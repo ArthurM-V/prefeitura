@@ -25,7 +25,7 @@ require __DIR__ . '/../shared/header.php';
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <input type="password" id="senha" name="senha" placeholder="********" required>
+                <input type="password" id="senha" name="senha" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Entrar</button>
         </form>

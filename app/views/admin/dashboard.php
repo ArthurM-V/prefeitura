@@ -14,7 +14,6 @@ require __DIR__ . '/../shared/header.php';
             <p>Visão geral dos chamados e atividades recentes.</p>
         </div>
 
-        <!-- ===== CARDS DE TOTAIS ===== -->
         <div class="stats-grid">
             <div class="stat-card stat-card-primary">
                 <span class="stat-label">Total de chamados</span>
@@ -31,7 +30,6 @@ require __DIR__ . '/../shared/header.php';
 
         <div class="dashboard-grid">
 
-            <!-- ===== CHAMADOS POR ÓRGÃO ===== -->
             <section class="card">
                 <div class="card-header-admin">
                     <h3>Chamados por órgão</h3>
@@ -62,7 +60,6 @@ require __DIR__ . '/../shared/header.php';
                 </div>
             </section>
 
-            <!-- ===== HISTÓRICO RECENTE ===== -->
             <section class="card">
                 <div class="card-header-admin">
                     <h3>Atividades recentes</h3>
@@ -94,7 +91,6 @@ require __DIR__ . '/../shared/header.php';
 
         </div>
 
-        <!-- ===== ATALHO PARA CHAMADOS ===== -->
         <div class="dashboard-actions">
             <a href="<?= BASE_URL ?>/admin/chamados" class="btn btn-primary">
                 Ver todos os chamados →

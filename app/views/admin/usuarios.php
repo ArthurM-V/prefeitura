@@ -145,28 +145,12 @@ function limparFormulario() {
     document.getElementById('form-title').textContent = 'Novo usuário';
 }
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const resp = await fetch('<?= BASE_URL ?>/admin/usuarios/salvar', {
-        method: 'POST',
-        body: new FormData(form),
-    });
-    const data = await resp.json();
-    if (data.success) location.reload();
-    else alert(data.message || 'Erro ao salvar.');
+form.addEventListener('submit', (event) => {
+    adminSubmitForm(event, form, '<?= BASE_URL ?>/admin/usuarios/salvar');
 });
 
 async function excluir(id) {
-    if (!confirm('Deseja excluir este usuário?')) return;
-    const body = new URLSearchParams({ id });
-    const resp = await fetch('<?= BASE_URL ?>/admin/usuarios/excluir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
-    });
-    const data = await resp.json();
-    if (data.success) location.reload();
-    else alert(data.message || 'Erro ao excluir.');
+    await adminDeleteItem(id, '<?= BASE_URL ?>/admin/usuarios/excluir', 'Deseja excluir este usuário?');
 }
 </script>
 

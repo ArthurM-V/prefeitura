@@ -1,5 +1,4 @@
 <?php
-// config/app.php
 
 define('BASE_URL', '/prefeitura');
 define('APP_NAME', 'Portal do Cidadão');

@@ -112,28 +112,12 @@ function limparFormulario() {
     document.getElementById('form-title').textContent = 'Nova categoria';
 }
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const resp = await fetch('<?= BASE_URL ?>/admin/categorias/salvar', {
-        method: 'POST',
-        body: new FormData(form),
-    });
-    const data = await resp.json();
-    if (data.success) location.reload();
-    else alert(data.message || 'Erro ao salvar.');
+form.addEventListener('submit', (event) => {
+    adminSubmitForm(event, form, '<?= BASE_URL ?>/admin/categorias/salvar');
 });
 
 async function excluir(id) {
-    if (!confirm('Deseja excluir esta categoria?')) return;
-    const body = new URLSearchParams({ id });
-    const resp = await fetch('<?= BASE_URL ?>/admin/categorias/excluir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
-    });
-    const data = await resp.json();
-    if (data.success) location.reload();
-    else alert(data.message || 'Erro ao excluir.');
+    await adminDeleteItem(id, '<?= BASE_URL ?>/admin/categorias/excluir', 'Deseja excluir esta categoria?');
 }
 </script>
 

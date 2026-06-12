@@ -9,11 +9,21 @@ class Usuario {
         $this->db = Database::getConnection();
     }
 
+    private function somenteDigitosCpf(string $cpf): string {
+        return preg_replace('/\D/', '', $cpf);
+    }
+
     public function autenticar(string $identificador, string $senha): ?array {
+        $cpfLimpo = $this->somenteDigitosCpf($identificador);
         $stmt = $this->db->prepare(
-            "SELECT * FROM usuarios WHERE email = ? OR cpf = ? LIMIT 1"
+            "SELECT *
+             FROM usuarios
+             WHERE email = ?
+                OR cpf = ?
+                OR REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?
+             LIMIT 1"
         );
-        $stmt->execute([$identificador, $identificador]);
+        $stmt->execute([$identificador, $identificador, $cpfLimpo]);
         $usuario = $stmt->fetch();
 
         if ($usuario && password_verify($senha, $usuario['senha'])) {
@@ -45,16 +55,32 @@ class Usuario {
     }
 
     public function buscarPorCpf(string $cpf): ?array {
-        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE cpf = ? LIMIT 1");
-        $stmt->execute([$cpf]);
+        $cpfLimpo = $this->somenteDigitosCpf($cpf);
+        $stmt = $this->db->prepare("
+            SELECT *
+            FROM usuarios
+            WHERE cpf = ?
+               OR REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$cpf, $cpfLimpo]);
         return $stmt->fetch() ?: null;
     }
 
     public function emailOuCpfExiste(string $email, string $cpf, int $excluirId = 0): bool {
+        $cpfLimpo = $this->somenteDigitosCpf($cpf);
         $stmt = $this->db->prepare(
-            "SELECT id FROM usuarios WHERE (email = ? OR cpf = ?) AND id != ? LIMIT 1"
+            "SELECT id
+             FROM usuarios
+             WHERE (
+                email = ?
+                OR cpf = ?
+                OR REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?
+             )
+             AND id != ?
+             LIMIT 1"
         );
-        $stmt->execute([$email, $cpf, $excluirId]);
+        $stmt->execute([$email, $cpf, $cpfLimpo, $excluirId]);
         return (bool) $stmt->fetch();
     }
 

@@ -6,7 +6,6 @@ $adminLogado = isLoggedIn() && isAdmin();
 $logado = isLoggedIn() && !isAdmin();
 ?>
 
-<!-- ========== NAVBAR ========== -->
 <header class="navbar">
     <div class="container navbar-inner">
         <a href="<?= BASE_URL ?>/" class="navbar-brand">
@@ -28,7 +27,6 @@ $logado = isLoggedIn() && !isAdmin();
     </div>
 </header>
 
-<!-- ========== HERO ========== -->
 <section class="hero">
     <div class="container">
         <p class="hero-eyebrow">Prefeitura Municipal</p>
@@ -51,7 +49,6 @@ $logado = isLoggedIn() && !isAdmin();
     </div>
 </section>
 
-<!-- ========== SOLUÇÕES RECENTES ========== -->
 <section class="section" id="solucoes">
     <div class="container">
         <h2 class="section-title">Últimas soluções realizadas</h2>
@@ -107,7 +104,6 @@ $logado = isLoggedIn() && !isAdmin();
     </div>
 </section>
 
-<!-- ========== FORMULÁRIO (só para logados) ========== -->
 <?php if ($logado): ?>
 <section class="section section-alt" id="novo-chamado">
     <div class="container container-narrow">
@@ -173,7 +169,6 @@ $logado = isLoggedIn() && !isAdmin();
     </div>
 </section>
 <?php elseif ($adminLogado): ?>
-<!-- Contexto para administradores -->
 <section class="section section-alt">
     <div class="container container-narrow">
         <div class="admin-context-note">
@@ -187,7 +182,6 @@ $logado = isLoggedIn() && !isAdmin();
     </div>
 </section>
 <?php else: ?>
-<!-- CTA para não logados -->
 <section class="section section-alt">
     <div class="container" style="text-align:center">
         <h2 class="section-title">Quer registrar uma solicitação?</h2>
@@ -224,7 +218,6 @@ function chamadoForm() {
             this.enviando = true;
             this.erro = false;
 
-            // FormData para suportar upload de arquivo
             const fd = new FormData();
             fd.append('categoria_id', this.form.categoria_id);
             fd.append('titulo',       this.form.titulo);

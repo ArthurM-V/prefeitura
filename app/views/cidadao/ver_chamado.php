@@ -38,7 +38,6 @@ $statusColors = [
             </h2>
         </div>
 
-        <!-- Dados do chamado -->
         <section class="card" style="margin-bottom:1.25rem">
             <div class="card-header-admin">
                 <h3><?= htmlspecialchars($chamado['titulo']) ?></h3>
@@ -70,7 +69,6 @@ $statusColors = [
                         : '<em class="text-muted">Ainda não atribuída</em>' ?></dd>
                 </dl>
 
-                <!-- Imagem enviada pelo cidadão -->
                 <?php
                 $imgCidadao = array_filter($imagens, fn($i) => $i['tipo'] === 'cidadao');
                 $imgCidadao = reset($imgCidadao);
@@ -86,7 +84,6 @@ $statusColors = [
             </div>
         </section>
 
-        <!-- Respostas da prefeitura -->
         <section class="card" style="margin-bottom:1.25rem">
             <div class="card-header-admin">
                 <h3>Respostas da prefeitura</h3>
@@ -121,7 +118,6 @@ $statusColors = [
             </div>
         </section>
 
-        <!-- Histórico -->
         <section class="card">
             <div class="card-header-admin">
                 <h3>Histórico de atualizações</h3>
@@ -137,7 +133,7 @@ $statusColors = [
                                 <div class="activity-body">
                                     <p class="activity-desc">
                                         <strong><?= htmlspecialchars($h['tipo_acao']) ?></strong>
-                                        — <?= htmlspecialchars($h['descricao']) ?>
+                                        - <?= htmlspecialchars($h['descricao']) ?>
                                     </p>
                                     <p class="activity-meta">
                                         <?= date('d/m/Y H:i', strtotime($h['data'])) ?>

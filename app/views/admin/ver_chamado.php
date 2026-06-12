@@ -167,9 +167,8 @@ foreach ($imagens as $img) {
                     </section>
                 <?php endif; ?>
 
-            </div><!-- /.detail-main -->
+            </div>
 
-            <!-- ===== COLUNA LATERAL (AÇÕES) ===== -->
             <aside class="detail-aside">
 
                 <!-- Editar chamado -->
