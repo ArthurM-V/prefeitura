@@ -255,9 +255,13 @@ class AdminController {
         $cpf      = sanitize($_POST['cpf'] ?? '');
         $tipo     = sanitize($_POST['tipo'] ?? 'cidadao');
         $senha    = $_POST['senha'] ?? '';
+        $telefoneDigitos = preg_replace('/\D/', '', $telefone);
 
         if (!$nome || !$email || !in_array($tipo, ['cidadao', 'admin'], true)) {
             jsonResponse(['success' => false, 'message' => 'Dados inválidos.'], 422);
+        }
+        if ($telefone !== '' && strlen($telefoneDigitos) < 10) {
+            jsonResponse(['success' => false, 'message' => 'Telefone deve conter pelo menos 10 dígitos.'], 422);
         }
 
         $usuarioModel = new Usuario();
@@ -408,7 +412,16 @@ class AdminController {
         $areaAtuacao = sanitize($_POST['area_atuacao'] ?? '');
         $ativo       = isset($_POST['ativo']) ? 1 : 0;
 
+        $cnpjDigitos = preg_replace('/\D/', '', $cnpj);
+        $telefoneDigitos = preg_replace('/\D/', '', $telefone);
+
         if (!$nome) jsonResponse(['success' => false, 'message' => 'Nome é obrigatório.'], 422);
+        if (strlen($cnpjDigitos) !== 14) {
+            jsonResponse(['success' => false, 'message' => 'CNPJ deve conter exatamente 14 dígitos.'], 422);
+        }
+        if ($telefone !== '' && strlen($telefoneDigitos) < 10) {
+            jsonResponse(['success' => false, 'message' => 'Telefone deve conter pelo menos 10 dígitos.'], 422);
+        }
 
         $empresaModel = new Empresa();
         $ok = $id

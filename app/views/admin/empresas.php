@@ -22,7 +22,7 @@ require __DIR__ . '/navbar.php';
                     </div>
                     <div class="form-group">
                         <label for="empresa-cnpj">CNPJ</label>
-                        <input type="text" name="cnpj" id="empresa-cnpj">
+                        <input type="text" name="cnpj" id="empresa-cnpj" inputmode="numeric" required>
                     </div>
                     <div class="form-group">
                         <label for="empresa-email">E-mail</label>
